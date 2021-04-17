@@ -1,6 +1,52 @@
 .singleArticleWrapper {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.loader {
+    align-self: center;
+    margin-bottom: auto;
+    margin-top: auto;
+}
+.articleDesc{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.articleInfo{
     display: flex;
     flex-direction: column;
-    align-items: center;
-    position: relative;
+    flex-basis: 70%;
+    justify-content: space-between;
+}
+.articleTitle{
+    color: #1890FF;
+    font-size: 20px;
+}
+.articleText{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+}
+.userInfo{
+    display: flex;
+    flex-basis: 30%;
+    justify-content: flex-end;
+}
+.nameAndDate{
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+.userName{
+    font-size: 18px;
+}
+.articleDate{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+}
+.articleBody{
+    min-height: 60vh;
 }

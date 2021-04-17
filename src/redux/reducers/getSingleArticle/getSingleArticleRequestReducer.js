@@ -1,4 +1,4 @@
-import { handleAction } from "redux-actions";
+import { handleActions } from "redux-actions";
 import {getSingleArticleRequest} from "../../actions/getSingleArticles";
 
 const initialState = true;
@@ -9,7 +9,7 @@ const handler = {
     [getSingleArticleRequest] : updateRequest,
 }
 
-const getSingleArticleRequestReducer = handleAction(handler, initialState);
+const getSingleArticleRequestReducer = handleActions(handler, initialState);
 
 export default getSingleArticleRequestReducer;
 

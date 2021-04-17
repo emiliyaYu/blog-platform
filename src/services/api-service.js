@@ -14,5 +14,22 @@ class Api {
         return response;
     }
 
+    registration = async (username, email, password) => {
+        const user = {
+            "username": `${username}`,
+            "email": `${email}`,
+            "password": `${password}`
+        }
+        const request = await fetch(`${this.basicUrl}/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json; charset=utf-8',
+            },
+            body: {
+                'user': JSON.stringify(user)
+            }
+        })
+        return request;
+    }
 }
 export default Api;
