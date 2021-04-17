@@ -16,7 +16,7 @@ const MainPagination = ({setPage, isLoading, currentPage}) => {
     return(
         <Pagination size="small" total={100} className={styles.pagination} pageSize={5} onChange={changePage}
         current={currentPage}
-        style={{marginTop: '30px', marginBottom: '20px'}}/>
+        style={{marginTop: '30px'}}/>
     )
 }
 MainPagination.defaultProps = {
