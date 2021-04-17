@@ -1,0 +1,16 @@
+.content {
+  margin: 24px 24px;
+  max-width: 941px;
+  width: 100%;
+  word-break: break-all;
+  display: flex;
+  flex-direction: column;
+}
+.wrapper {
+  min-height: calc(100vh - 40px);
+  display: flex;
+  justify-content: center;
+}
+.container {
+  background-color: #EBEEF3;
+}

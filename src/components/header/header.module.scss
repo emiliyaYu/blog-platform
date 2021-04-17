@@ -1,0 +1,44 @@
+.header {
+   max-width: 100vw;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   background-color: white;
+   margin-left: auto;
+   margin-right: auto;
+  align-items: center;
+ }
+.titleHeader {
+  flex-basis: 30%;
+  margin: 20px;
+}
+.buttonHeaderWrapper {
+  flex-basis: 30%;
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
+  align-items: center;
+}
+.buttonHeader {
+  margin-left: 20px;
+}
+.SignIn {
+  border: none;
+  outline: none;
+  background-color: white;
+  width: 84px;
+  height: 35px;
+}
+.SignUp {
+  width: 82px;
+  height: 39px;
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid #52C41A;
+  color: #52C41A;
+  outline: none;
+  &:focus{
+    border: 2px solid green;
+    color: green;
+  }
+}
