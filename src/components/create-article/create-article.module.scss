@@ -1,0 +1,89 @@
+.createArticleWrapper{
+  padding: 34px;
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 60vh;
+}
+.createArticleTitle{
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 800;
+}
+.createField{
+  display: flex;
+  flex-direction: column;
+  min-height: 30vh;
+  justify-content: space-between;
+  min-width: 100%;
+}
+.createItem{
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  min-width: 100%;
+}
+.createTitle{
+
+}
+.createInput {
+  height: 40px;
+  border-radius: 5px;
+  outline: none;
+  padding: 8px;
+  border: 1px solid #D9D9D9;
+  &:hover{
+    border: 1px solid #1890FF;
+  }
+  &:focus {
+    border: 1px solid #1890FF;
+    box-shadow: 0 0 3px 0 rgba(43, 142, 217, 0.3);
+  }
+}
+.createTagWrapper {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+
+}
+.tagsField{
+  display: flex;
+  justify-content: space-between;
+  width: 500px;
+}
+.tagInput{
+  margin-right: 20px;
+}
+.deleteButton {
+  width: 118px;
+  height: 40px;
+  background-color: white;
+  border: 1px solid #F5222D;
+  color: #F5222D;
+  border-radius: 5px;
+}
+.addButton{
+  width: 118px;
+  height: 40px;
+  background-color: white;
+  border-radius: 5px;
+  color: #1890FF;
+  border: 1px solid #1890FF;
+  outline: none;
+}
+.createSubmit{
+align-self: flex-start;
+}
+.submitButton{
+  width: 319px;
+  height: 40px;
+  color: white;
+  background-color: #1890FF;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}

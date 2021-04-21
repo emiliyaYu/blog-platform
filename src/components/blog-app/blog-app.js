@@ -10,6 +10,9 @@ import 'antd/dist/antd.css';
 import SingleArticle from "../single-article/single-article";
 import SignUp from "../sign-up";
 import SignIn from "../sign-in";
+import EditProfile from "../edit-profile";
+import CreateArticle from "../create-article";
+
 
 
 const BlogApp = () => {
@@ -17,18 +20,24 @@ const BlogApp = () => {
     const dispatch = useDispatch();
     const currentPage = useSelector(state => state.currentPageReducer);
 
-    useEffect(() => {
+    // const localStore = new LocalStorage();
+    //
+    // const login = JSON.parse(localStore.getIsLogin());
 
+    useEffect(() => {
         dispatch(updateArticlesList(5, currentPage));
-        })
+        
+    })
+
+
+    
     return(
         <Router>
         <div className={container}>
             <Header/>
-            <div className={wrapper
-            }>
+            <div className={wrapper}>
                 <Switch>
-                    <Route path='/home' exact render={() => (
+                    <Route path='/' exact render={() => (
                            <div className={content}>
                                <ArticleList/>
                                <MainPagination/>
@@ -43,6 +52,12 @@ const BlogApp = () => {
                     </div>}/>
                     <Route path='/sign_in' render={() => <div className={content}>
                         <SignIn/>
+                    </div>}/>
+                    <Route path='/profile' render={() => <div className={content}>
+                        <EditProfile/>
+                    </div>}/>
+                    <Route path='/new-article' render={() => <div className={content}>
+                        <CreateArticle/>
                     </div>}/>
                 </Switch>
             </div>

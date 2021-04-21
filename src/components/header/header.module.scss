@@ -44,3 +44,38 @@
     color: green;
   }
 }
+.buttonAuthWrapper {
+  flex-basis: 24%;
+  display: flex;
+  justify-content: space-around;
+  margin: 24px;
+  align-items: center;
+ }
+.createArticleButton{
+  width: 112px;
+  height: 36px;
+  padding: 6px;
+  color: #52C41A;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 2px solid #52C41A;
+  outline: none;
+  background-color: white;
+  &:focus{
+    border: 2px solid green;
+    color: green;
+  }
+}
+.userName{
+  font-size: 15px;
+  font-weight: 600;
+}
+.logOutButton{
+  width: 109px;
+  height: 45px;
+  outline: none;
+  font-weight: 600;
+  border-radius: 5px;
+  border: 2px solid black;
+  background-color: white;
+}

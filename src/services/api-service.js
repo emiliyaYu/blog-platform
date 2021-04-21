@@ -16,20 +16,60 @@ class Api {
 
     registration = async (username, email, password) => {
         const user = {
-            "username": `${username}`,
-            "email": `${email}`,
-            "password": `${password}`
+            'user': {
+            "username": username,
+            "email" : email,
+            'password': password
+            }
         }
-        const request = await fetch(`${this.basicUrl}/users`, {
+        const request = await fetch(`${this.basicUrl}users`, {
             method: 'POST',
             headers: {
-                'Content-Type' : 'application/json; charset=utf-8',
+                'Content-Type' : 'application/json;charset=utf-8',
             },
-            body: {
-                'user': JSON.stringify(user)
-            }
+            body: JSON.stringify(user)
         })
-        return request;
+        const response = await request.json();
+        return response;
+    }
+
+    login = async (email, password) => {
+        const user = {
+            'user': {
+                'email' : email,
+                'password' : password,
+            }
+        }
+        const request = await fetch(`${this.basicUrl}users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify(user)
+        });
+        if(!request.ok) {
+            throw new Error()
+        }
+
+        const response = await request.json();
+        return response;
+
+    }
+
+    editProfile = async (userData, token) => {
+       if(!userData) throw new Error('Missing data');
+       const user = {...userData};
+       const requset = await fetch(`${this.basicUrl}user`, {
+           method: 'PUT',
+           headers: {
+               'Content-Type' : 'application/json;charset=utf-8',
+               Authorization: `Token ${token}`,
+           },
+           body: JSON.stringify(user)
+       })
+        if(!requset.ok) throw new Error('Request failed');
+        const response = requset.json();
+        return response;
     }
 }
 export default Api;
