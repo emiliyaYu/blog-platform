@@ -5,13 +5,13 @@ import {Avatar} from "antd";
 import {Link} from 'react-router-dom'
 import classes from 'classnames';
 import styles from './header.module.scss'
-import {getIsLogin, getUser, setIsLogin, removeUser} from "../../services/local-storage";
+import {getIsLogin, getUser, removeUser} from "../../services/local-storage";
 import {isLogIn} from "../../redux/actions/login";
 
 
 
 const Header = ({user, updateIsLogin}) => {
-    const {header, titleHeader, buttonHeaderWrapper, buttonHeader, SignIn, SignUp, createArticleButton, userName, logOutButton, buttonAuthWrapper} = styles;
+    const {header, titleHeader, buttonHeaderWrapper, buttonHeader, SignIn, SignUp, createArticleButton, userName, logOutButton, buttonAuthWrapper, link, avatar} = styles;
     const signInClass = classes(buttonHeader, SignIn);
     const signUpClass = classes(buttonHeader, SignUp);
 
@@ -19,9 +19,7 @@ const Header = ({user, updateIsLogin}) => {
 
     const handlerLogOut = () => {
         updateIsLogin(false);
-        setIsLogin(false);
         removeUser();
-
     }
 
 
@@ -29,7 +27,7 @@ const Header = ({user, updateIsLogin}) => {
 
     const NotAuthorized = () => ( // когда пользователь не авторизирован
             <div className={buttonHeaderWrapper}>
-                <Link to='/sign_in'><button type='button' className={signInClass}>Sign In</button></Link>
+                <Link className={link} to='/sign_in'><button type='button' className={signInClass}>Sign In</button></Link>
                 <Link to='/sign_up'><button type='button' className={signUpClass}>Sign Up</button></Link>
             </div>
         )
@@ -39,8 +37,8 @@ const Header = ({user, updateIsLogin}) => {
         return (
             <div className={buttonAuthWrapper}>
                 <Link to='/new-article'><button className={createArticleButton} type='button'>Create Article</button></Link>
-                <Link to='/profile'><span className={userName}>{username}</span></Link>
-                <Avatar size={45} src={image !== null ? image : defaultImage}/>
+                <Link to='/profile' className={link}><span className={userName}>{username}</span></Link>
+                <Link to='/profile' className={link}><Avatar size={45} src={image !== null ? image : defaultImage} className={avatar}/></Link>
                 <button className={logOutButton} type='button' onClick={handlerLogOut}>Log Out</button>
             </div>
         )
@@ -48,7 +46,7 @@ const Header = ({user, updateIsLogin}) => {
 
     return (
         <header className={header}>
-            <Link to='/'><span className={titleHeader}>Realworld Blog</span></Link>
+            <Link to='/' className={link}><span className={titleHeader}>Realworld Blog</span></Link>
             {isLogin === false || isLogin === null? <NotAuthorized/> : <Authorized/>}
         </header>
     )

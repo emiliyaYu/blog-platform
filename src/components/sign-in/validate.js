@@ -1,6 +1,9 @@
 const validate = {
     validateLoginEmail: {
-        required: true,
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
         pattern: {
             value: /[^@\s]+@[^@\s]+\.[^@\s]+/,
             message: 'Invalid email.'

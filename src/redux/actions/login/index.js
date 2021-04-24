@@ -2,10 +2,10 @@ import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
 
 
-const LOGIN_REQUEST = 'LOGIN_REQUEST';
-const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-const LOGIN_FAILED = 'LOGIN_FAILED';
-const LOG_IN = 'lOG_IN';
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILED = 'LOGIN_FAILED';
+export const LOG_IN = 'lOG_IN';
 
 export const getLoginUserRequest = createAction(LOGIN_REQUEST, isLoad => isLoad);
 export const getLoginUserSuccess = createAction(LOGIN_SUCCESS, currentUser => currentUser);

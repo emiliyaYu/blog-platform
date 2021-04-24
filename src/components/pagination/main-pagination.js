@@ -30,8 +30,8 @@ MainPagination.propTypes = {
     currentPage: PropTypes.number
 }
 const mapStateToProps = (state) => ({
-    isLoading: state.getArticleRequestReducer,
-    currentPage: state.currentPageReducer
+    isLoading: state.articlesReducer.articlesRequest,
+    currentPage: state.articlesReducer.currentPage
 })
 const mapDispatchToProps = (dispatch) => ({
     setPage : (page) => dispatch(setCurrentPage(page))

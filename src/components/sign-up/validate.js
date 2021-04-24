@@ -1,7 +1,10 @@
 
 const validate = {
     validateUsername: {
-        required: true,
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
         maxLength : {
             value: 20,
             message: 'Username must contain from 3 to 20 characters.'
@@ -12,14 +15,20 @@ const validate = {
         }
     },
     validateEmail: {
-        required: true,
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
         pattern: {
             value: /[^@\s]+@[^@\s]+\.[^@\s]+/,
             message: 'Invalid email.'
         }
     },
     validatePassword: {
-        required: true,
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
         maxLength: {
             value: 40,
             message: 'Password must contain from 8 to 40 characters.'
@@ -30,7 +39,10 @@ const validate = {
         }
     },
     validatePersonalInfo : {
-        required: true
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
     }
 }
 export default validate;

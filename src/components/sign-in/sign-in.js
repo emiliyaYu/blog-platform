@@ -2,6 +2,7 @@ import React, {useEffect, useCallback} from 'react';
 import {connect} from "react-redux";
 import {useHistory} from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import classes from 'classnames';
 import PropTypes from 'prop-types';
 import styles from './sign-in.module.scss'
 import {getLoginUser, getLoginUserFailed} from "../../redux/actions/login";
@@ -11,10 +12,13 @@ import openNotification from "../notification";
 
 
 const SignIn = ({setLoginUser, isError, updateIsError}) => {
-    const {signInWrapper,signInTitle, signInForm,signInItem, signInText, signInInput, signInSubmit, signInButton, hasAccount} = styles;
+    const {signInWrapper,signInTitle, signInForm,signInItem, signInText, signInInput, signInSubmit, signInButton, hasAccount, errorMessage, errorInput} = styles;
+
+    const classOfInput = classes( signInInput, { [errorInput] : isError === null});
+
     const history = useHistory();
 
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, formState: {errors}} = useForm();
 
     const handlerSubmit = (data) => {
         const {loginEmail, loginPassword} = data;
@@ -27,7 +31,7 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
             updateIsError(null)
         }
         if(isError === true) {
-            openNotification('error', 'Error', 'Invalid');
+            openNotification('error', 'Error', 'Invalid email or password');
         }
     }, [history, isError, updateIsError])
 
@@ -41,11 +45,12 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
             <div className={signInForm}>
                 <label className={signInItem}>
                     <span className={signInText}>Email</span>
-                    <input className={signInInput} type='email' placeholder='Email' {...register('loginEmail',{...validate.validateLoginEmail})}/>
+                    <input className={classOfInput} type='email' placeholder='Email' {...register('loginEmail',{...validate.validateLoginEmail})}/>
+                    {errors.loginEmail && <p className={errorMessage}>{errors.loginEmail.message}</p>}
                 </label>
                 <label className={signInItem}>
                     <span className={signInText}>Password</span>
-                    <input className={signInInput} type='password' placeholder='Password' {...register('loginPassword', {...validate.validatePassword})}/>
+                    <input className={classOfInput} type='password' placeholder='Password' {...register('loginPassword', {...validate.validatePassword})}/>
                 </label>
             </div>
             <div className={signInSubmit}>
@@ -66,7 +71,7 @@ SignIn.propTypes = {
     isError: PropTypes.bool
 }
 const mapSateToProps = (state) => ({
-    isError: state.loginUserFailedReducer
+    isError: state.loginReducer.loginFailed
 })
 const mapDispatchToProps = (dispatch) => ({
     setLoginUser: (email, password) => dispatch(getLoginUser(email, password)),

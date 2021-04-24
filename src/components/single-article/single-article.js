@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {connect} from "react-redux";
 import PropTypes from 'prop-types';
+import {uniqueId} from 'lodash';
 import ReactMarkdown from "react-markdown";
 import {Avatar, Tag} from "antd";
 import Loader from "react-loader-spinner";
@@ -11,43 +12,44 @@ import convertDate from "../../utilts/convertDate";
 
 const SingleArticle = ({match, article, isLoad, getSingleArticle}) => {
     
-    useEffect(() => 
-            // eslint-disable-next-line react/prop-types
-             getSingleArticle(match.params.slug)
+    // eslint-disable-next-line react/prop-types
+        useEffect( () => getSingleArticle(match.params.slug),[])// eslint-disable-line react-hooks/exhaustive-deps
 
-    ,[])// eslint-disable-line react-hooks/exhaustive-deps
+    const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleBody, loader, articleDate} = styles;
+    const renderArticle = (singleArticle) => {
 
-    const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleDate, articleBody, loader} = styles;
-    if(isLoad === true) return <Loader type="Rings" color='#2196f3' height={80} width={80} className={loader}/>;
+        if(isLoad === true) return <Loader type="Rings" color='#2196f3' height={80} width={80} className={loader}/>;
+        // eslint-disable-next-line no-shadow
+        const {article} = singleArticle;
+            const {title, description, author, createdAt, body, tagList} = article;
+            const {username, image} = author;
+            const tags = tagList.map((tag) => <Tag key={uniqueId('id')}>{tag}</Tag>)
+            const dt = convertDate(createdAt);
+            return (
+                <div className={singleArticleWrapper}>
+                    <div className={articleDesc}>
+                        <div className={articleInfo}>
+                            <div>
+                                <span className={articleTitle}>{title}</span>
+                                <div>{tags}</div>
+                            </div>
+                            <span className={articleText}>{description}</span>
 
-   const {title, tagList, body, author, createdAt, description} = article;
-    const tags = tagList.map((el) => <Tag>{el}</Tag>);
-    const dt = convertDate(createdAt);
-    const {username, image} = author;
-
-
-    return (
-        <div className={singleArticleWrapper}>
-            <div className={articleDesc}>
-                <div className={articleInfo}>
-                    <div>
-                        <span className={articleTitle}>{title}</span>
-                        <div>{tags}</div>
+                        </div>
+                        <div className={userInfo}>
+                            <div className={nameAndDate}>
+                                <span className={userName}>{username}</span>
+                                <span className={articleDate}>{`${dt.monthLong} ${dt.day}, ${dt.year}`}</span>
+                            </div>
+                            <Avatar size={45} src={image}/>
+                        </div>
                     </div>
-                    <span className={articleText}>{description}</span>
-
+                    <div className={articleBody}><ReactMarkdown>{body}</ReactMarkdown></div>
                 </div>
-                <div className={userInfo}>
-                    <div className={nameAndDate}>
-                        <span className={userName}>{username}</span>
-                        <span className={articleDate}>{`${dt.monthLong} ${dt.day}, ${dt.year}`}</span>
-                    </div>
-                    <Avatar size={45} src={image} />
-                </div>
-            </div>
-           <div className={articleBody}><ReactMarkdown>{body}</ReactMarkdown></div>
-        </div>
-    )
+            )
+    }
+    if(article.length === 0) return null;
+   return renderArticle(article);
 }
 SingleArticle.defaultProps = {
     match: {},
@@ -57,18 +59,18 @@ SingleArticle.defaultProps = {
 }
 SingleArticle.propTypes = {
     match: PropTypes.shape({}),
-    article: PropTypes.shape([]),
+    article: PropTypes.shape({}),
     isLoad: PropTypes.bool,
     getSingleArticle: PropTypes.func
 }
 
 const mapStateToProps = (state) => ({
-    article: state.getSingleArticleSuccessReducer.currentArticle.article,
-    isLoad: state.getSingleArticleRequestReducer,
+    article: state.singleArticleReducer.articleSuccess,
+    isLoad: state.singleArticleReducer.articleRequest,
 
 })
 const mapDispatchToProps = (dispatch) => ({
     setSingle: (bool) => dispatch(isSingleArticle(bool)),
-    getSingleArticle: (slug)=> dispatch(getArticle(slug))
+    getSingleArticle: (slug) => dispatch(getArticle(slug))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(SingleArticle);

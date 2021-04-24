@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch) => ({
     setSingle: (bool) => dispatch(isSingleArticle(bool))
 })
 const mapStateToProps = (state) => ({
-    articlesData: state.getArticleSuccessReducer.articlesList.articles,
-    isLoading: state.getArticleRequestReducer
+    articlesData: state.articlesReducer.articlesSuccess.articles,
+    isLoading: state.articlesReducer.articlesRequest
 })
 export default connect(mapStateToProps, mapDispatchToProps)(ArticleList);

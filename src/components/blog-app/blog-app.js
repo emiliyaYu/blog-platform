@@ -18,11 +18,7 @@ import CreateArticle from "../create-article";
 const BlogApp = () => {
     const {content, wrapper, container} = styles;
     const dispatch = useDispatch();
-    const currentPage = useSelector(state => state.currentPageReducer);
-
-    // const localStore = new LocalStorage();
-    //
-    // const login = JSON.parse(localStore.getIsLogin());
+    const currentPage = useSelector(state => state.articlesReducer.currentPage);
 
     useEffect(() => {
         dispatch(updateArticlesList(5, currentPage));

@@ -1,10 +1,10 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
 
-const GET_SINGLE_ARTICLE_REQUEST = 'GET_SINGLE_ARTICLES_REQUEST'
-const GET_SINGLE_ARTICLE_SUCCESS = 'GET_SINGLE_ARTICLES_SUCCESS';
-const GET_SINGLE_ARTICLE_FAILED = 'GET_SINGLE_ARTICLES_FAILED';
-const IS_SINGLE_ARTICLE = 'IS_SINGLE_ARTICLE';
+export const GET_SINGLE_ARTICLE_REQUEST = 'GET_SINGLE_ARTICLES_REQUEST'
+export const GET_SINGLE_ARTICLE_SUCCESS = 'GET_SINGLE_ARTICLES_SUCCESS';
+export const GET_SINGLE_ARTICLE_FAILED = 'GET_SINGLE_ARTICLES_FAILED';
+export const IS_SINGLE_ARTICLE = 'IS_SINGLE_ARTICLE';
 
 export const getSingleArticleRequest = createAction(GET_SINGLE_ARTICLE_REQUEST, isLoad => isLoad);
 export const getSingleArticleSuccess = createAction(GET_SINGLE_ARTICLE_SUCCESS, article => article);

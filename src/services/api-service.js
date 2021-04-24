@@ -1,15 +1,18 @@
+
 class Api {
     basicUrl = 'https://conduit.productionready.io/api/';
 
     getListOfArticles = async (limit = 5, page= 1) => {
         const offset = page === 1 ? 0 : (page - 1) * 5;
         const request = await fetch(`${this.basicUrl}articles?limit=${limit}&offset=${offset}`);
+        if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;
     }
 
     getSingleArticle = async (slug) => {
         const request = await fetch(`${this.basicUrl}articles/${slug}`);
+        if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;
     }
@@ -29,6 +32,7 @@ class Api {
             },
             body: JSON.stringify(user)
         })
+        if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;
     }
@@ -47,9 +51,7 @@ class Api {
             },
             body: JSON.stringify(user)
         });
-        if(!request.ok) {
-            throw new Error()
-        }
+        if(!request.ok) throw new Error('Request failed');
 
         const response = await request.json();
         return response;
@@ -59,7 +61,7 @@ class Api {
     editProfile = async (userData, token) => {
        if(!userData) throw new Error('Missing data');
        const user = {...userData};
-       const requset = await fetch(`${this.basicUrl}user`, {
+       const request = await fetch(`${this.basicUrl}user`, {
            method: 'PUT',
            headers: {
                'Content-Type' : 'application/json;charset=utf-8',
@@ -67,8 +69,24 @@ class Api {
            },
            body: JSON.stringify(user)
        })
-        if(!requset.ok) throw new Error('Request failed');
-        const response = requset.json();
+        if(!request.ok) throw new Error('Request failed');
+        const response = request.json();
+        return response;
+    }
+
+    createArticle = async (newArticle, token) => {
+        if(!newArticle) throw new Error('Missing data');
+        const article = { article: {...newArticle}};
+        const request = await fetch(`${this.basicUrl}/articles`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify(article)
+        })
+        if(!request.ok) throw new Error('Request failed');
+        const response = request.json();
         return response;
     }
 }

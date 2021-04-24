@@ -2,11 +2,11 @@ import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
 import {isSingleArticle} from "../getSingleArticles";
 
-const GET_ARTICLES_REQUEST = 'GET_ARTICLES_REQUEST'
-const GET_ARTICLES_SUCCESS = 'GET_ARTICLES_SUCCESS';
-const GET_ARTICLES_FAILED = 'GET_ARTICLES_FAILED';
+export const GET_ARTICLES_REQUEST = 'GET_ARTICLES_REQUEST'
+export const GET_ARTICLES_SUCCESS = 'GET_ARTICLES_SUCCESS';
+export const GET_ARTICLES_FAILED = 'GET_ARTICLES_FAILED';
 
-const CURRENT_PAGE_OF_ARTICLES = 'CURRENT_PAGE_OF_ARTICLES';
+export const CURRENT_PAGE_OF_ARTICLES = 'CURRENT_PAGE_OF_ARTICLES';
 
 export const getArticlesRequest = createAction(GET_ARTICLES_REQUEST, isLoad => isLoad);
 export const getArticlesSuccess = createAction(GET_ARTICLES_SUCCESS, articlesData => articlesData);
@@ -20,6 +20,7 @@ export const updateArticlesList = (key, offset) => async (dispatch) => {
     try{
         const request = await api.getListOfArticles(key, offset);
         dispatch(getArticlesSuccess(request));
+
         dispatch(getArticlesRequest(false));
         dispatch(isSingleArticle(false))
     }

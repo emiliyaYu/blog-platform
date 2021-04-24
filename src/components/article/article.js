@@ -58,6 +58,6 @@ Article.propTypes = {
     description: PropTypes.string
 }
 const mapStateToProps = (state) => ({
-    isSingle: state.isSingleArticleReducer
+    isSingle: state.singleArticleReducer.isSingleArticle
 })
 export default connect(mapStateToProps)(Article);
