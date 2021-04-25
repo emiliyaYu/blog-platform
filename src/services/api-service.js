@@ -77,7 +77,7 @@ class Api {
     createArticle = async (newArticle, token) => {
         if(!newArticle) throw new Error('Missing data');
         const article = { article: {...newArticle}};
-        const request = await fetch(`${this.basicUrl}/articles`, {
+        const request = await fetch(`${this.basicUrl}articles`, {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json;charset=utf-8',
@@ -87,6 +87,32 @@ class Api {
         })
         if(!request.ok) throw new Error('Request failed');
         const response = request.json();
+        return response;
+    }
+
+    deleteArticle = async (slug, token) => {
+        const request = await fetch(`${this.basicUrl}articles/${slug}`,{
+            method: 'DELETE',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            },
+        });
+        if(!request.ok) throw new Error('Request failed');
+    }
+
+    editArticle = async (data, slug, token) => {
+        const newArticle = {'article': {...data}};
+        const request = await fetch(`${this.basicUrl}articles/${slug}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify(newArticle)
+        })
+        if(!request.ok) throw new Error(`Request failed`);
+        const response = await request.json();
         return response;
     }
 }

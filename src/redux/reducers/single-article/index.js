@@ -1,4 +1,4 @@
-import * as article from '../../actions/getSingleArticles/index';
+import * as article from '../../actions/single-article/index';
 
 const initialState = {
     articleRequest: false,

@@ -32,6 +32,7 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
         }
         if(isError === true) {
             openNotification('error', 'Error', 'Invalid email or password');
+            updateIsError(null)
         }
     }, [history, isError, updateIsError])
 

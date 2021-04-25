@@ -7,7 +7,7 @@ import Loader from "react-loader-spinner";
 import Article from "../article";
 import styles from './article-list.module.scss'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import {isSingleArticle} from "../../redux/actions/getSingleArticles";
+import {isSingleArticle} from "../../redux/actions/single-article";
 
 const ArticleList = ({articlesData, isLoading, setSingle}) => {
 

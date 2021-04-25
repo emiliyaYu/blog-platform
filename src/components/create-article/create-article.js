@@ -9,10 +9,9 @@ import {createArticleFailed, createNewArticle} from "../../redux/actions/create-
 import {getUser} from "../../services/local-storage";
 import validate from "./validate";
 import openNotification from "../notification";
+import {updateArticlesList} from "../../redux/actions/articles";
 
-const CreateArticle = ({token, createArticle, isError}) => {
-
-    console.log(isError)
+const CreateArticle = ({token, createArticle, isError, renewArticlesList, page}) => {
 
     const {register, handleSubmit, control, formState: {errors}} = useForm({
         defaultValues: {
@@ -37,12 +36,13 @@ const CreateArticle = ({token, createArticle, isError}) => {
 
     const initHistory = useCallback(() => {
         if(isError === false) {
+            renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
             history.push('/');
         }
         if(isError === true) {
             openNotification('error', 'Error', 'Invalid');
         }
-    }, [history, isError]);
+    }, [history, isError, page, renewArticlesList]);
 
     useEffect(() => {
         initHistory();
@@ -99,23 +99,29 @@ const CreateArticle = ({token, createArticle, isError}) => {
 CreateArticle.defaultProps = {
     createArticle: ()=>{},
     updateError: () =>{},
+    renewArticlesList: ()=>{},
+    page: 1,
     token: '',
     isError: false
 }
 CreateArticle.propTypes = {
     createArticle: PropTypes.func,
     updateError: PropTypes.func,
+    renewArticlesList: PropTypes.func,
+    page: PropTypes.number,
     token: PropTypes.string,
     isError: PropTypes.bool
 }
 const mapStateToProps = (state) => {
     const user = getUser();
-    const isError = state.createArticleReducer.createArticleFailed
+    const isError = state.createArticleReducer.createArticleFailed;
+    const page = state.articlesReducer.currentPage;
    const {token} = user;
-   return {token, isError};
+   return {token, isError, page};
 }
 const mapDispatchToProps = (dispatch) => ({
     createArticle: (data, token) => dispatch(createNewArticle(data, token)),
+    renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
     updateError: (isError) => dispatch(createArticleFailed(isError))
 })
 

@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import classes from 'classnames';
 import styles from './sign-up.module.scss'
-import {getUser} from "../../redux/actions/registration";
+import {getUser, registrationFailed} from "../../redux/actions/registration";
 import validate from "./validate";
 import openNotification from "../notification";
 
-const SignUp = ({setUser, isError}) => {
+const SignUp = ({setUser, isError, updateError}) => {
     const {signUpWrapper, signUpTitle, registerWrapper, registerTitle, registerInput, personalInfoWrapper, personalInfo, personalInfoText, hasAccount,submitWrapper, registerItem, submitButton,
         personalInfoCheck, errorMessage, errorInput} = styles;
 
@@ -20,7 +20,10 @@ const SignUp = ({setUser, isError}) => {
 
     const handlerSubmit = (data) => {
        const {username, registerEmail, registerPassword} = data;
-       if (isError === true) openNotification('error', 'Error', 'Request failed');
+       if (isError === true) {
+           openNotification('error', 'Error', 'Request failed');
+           updateError(null);
+       }
 
         return setUser(username, registerEmail, registerPassword);
     }
@@ -69,16 +72,19 @@ const SignUp = ({setUser, isError}) => {
 }
 SignUp.defaultProps = {
     setUser: ()=>{},
+    updateError: ()=>{},
     isError: false,
 }
 SignUp.propTypes = {
     setUser: PropTypes.func,
+    updateError: PropTypes.func,
     isError: PropTypes.bool,
 }
 const mapStateToProps = (state) => ({
     isError: state.registrationReducer.registrationFailed
 })
 const mapDispatchToProps = (dispatch) => ({
-    setUser: (username, email, password) => dispatch(getUser(username, email, password))
+    setUser: (username, email, password) => dispatch(getUser(username, email, password)),
+    updateError: (isError) => dispatch(registrationFailed(isError))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

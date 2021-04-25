@@ -12,6 +12,7 @@ import SignUp from "../sign-up";
 import SignIn from "../sign-in";
 import EditProfile from "../edit-profile";
 import CreateArticle from "../create-article";
+import EditArticle from "../edit-article";
 
 
 
@@ -54,6 +55,9 @@ const BlogApp = () => {
                     </div>}/>
                     <Route path='/new-article' render={() => <div className={content}>
                         <CreateArticle/>
+                    </div>}/>
+                    <Route path='/article/edit-article/:slug' exact render={({match}) => <div className={content}>
+                        <EditArticle match={match}/>
                     </div>}/>
                 </Switch>
             </div>

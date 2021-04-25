@@ -50,3 +50,30 @@
 .articleBody{
     min-height: 60vh;
 }
+.userActions {
+    margin-top: 15px;
+}
+.buttonEdit{
+    width: 70px;
+    height: 30px;
+    margin-right: 15px;
+    background-color: white;
+    border: 1px solid #52C41A;
+    border-radius: 5px;
+    outline: none;
+    color: #52C41A;
+    cursor: pointer;
+}
+.buttonDelete {
+    width: 70px;
+    height: 30px;
+    background-color: white;
+    border: 1px solid #F5222D;
+    border-radius: 5px;
+    outline: none;
+    color: #F5222D;
+    cursor: pointer;
+}
+.user {
+    display: flex;
+}

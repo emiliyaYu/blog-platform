@@ -1,6 +1,6 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
-import {isSingleArticle} from "../getSingleArticles";
+import {isSingleArticle} from "../single-article";
 
 export const GET_ARTICLES_REQUEST = 'GET_ARTICLES_REQUEST'
 export const GET_ARTICLES_SUCCESS = 'GET_ARTICLES_SUCCESS';
