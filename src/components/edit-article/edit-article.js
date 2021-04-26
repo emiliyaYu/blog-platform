@@ -6,10 +6,10 @@ import {useForm, useFieldArray, useController} from "react-hook-form";
 import {Input} from 'antd';
 import styles from './edit-article.module.scss';
 import {updateArticle} from "../../redux/actions/edit-article";
-import {getUser} from "../../services/local-storage";
+import {getIsLogin, getUser} from "../../services/local-storage";
 import {updateArticlesList} from "../../redux/actions/articles";
 
-const EditArticle = ({article, token, editArticle, isError, page, renewArticlesList}) => {
+const EditArticle = ({article, jToken, editArticle, isError, page, renewArticlesList, isLogin}) => {
     const {TextArea} = Input;
     const {editArticleWrapper, editArticleTitle, editField, editItem, editTitle, editInput, editTagWrapper, tagsFieldWrapper, editSubmit, submitButton, tagsField, addButton, deleteButton} = styles;
     const {title, description, body, tagList, slug} = article;
@@ -34,18 +34,20 @@ const EditArticle = ({article, token, editArticle, isError, page, renewArticlesL
         // eslint-disable-next-line no-shadow
         const {tags, body, title, description} = data;
         // eslint-disable-next-line no-shadow
-        const newTags = tags.map(el => Object.values(el)).flat();
+        const newTags = tags.map(el => Object.values(el)).flat(); // удобный для запроса тег-лист
         const newData = {tagList: newTags, body, title, description};
-        editArticle(newData, slug, token);
+        editArticle(newData, slug, jToken);
     }
+
     const history = useHistory();
     
     const initHistory = useCallback(() => {
+        if(isLogin === false) history.push('/');
         if(isError === false){
             renewArticlesList(5, page);
             history.push('/article/:slug');
         }
-    },[history, isError, page, renewArticlesList])
+    },[history, isError, isLogin, page, renewArticlesList])
 
     useEffect(() => {
         initHistory()
@@ -95,11 +97,13 @@ const EditArticle = ({article, token, editArticle, isError, page, renewArticlesL
 }
 EditArticle.defaultProps = {
     article: {},
-    token: '',
+    jToken: '',
     isError: false,
     page: 1,
     editArticle: ()=>{},
-    renewArticlesList: ()=>{}
+    renewArticlesList: ()=>{},
+    isLogin: false,
+
 }
 EditArticle.propTypes = {
     article: PropTypes.shape({
@@ -109,17 +113,19 @@ EditArticle.propTypes = {
         tagList: PropTypes.arrayOf(PropTypes.string),
         slug: PropTypes.string
     }),
-    token: PropTypes.string,
+    jToken: PropTypes.string,
     isError: PropTypes.bool,
     page: PropTypes.number,
     editArticle: PropTypes.func,
-    renewArticlesList: PropTypes.func
+    renewArticlesList: PropTypes.func,
+    isLogin: PropTypes.func
 }
 const mapStateToProps = (state) => ({
     article: state.singleArticleReducer.articleSuccess.article,
-    token: getUser().token,
+    jToken: getUser() === null? '' : getUser().token,
     isError: state.editArticleReducer.editArticleFailed,
-    page: state.articlesReducer.currentPage
+    page: state.articlesReducer.currentPage,
+    isLogin: getIsLogin()
 })
 const mapDispatchToProps = (dispatch) => ({
     editArticle: (data,slug,token) => dispatch(updateArticle(slug, token, data)),

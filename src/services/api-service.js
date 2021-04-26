@@ -1,10 +1,27 @@
 
+
 class Api {
     basicUrl = 'https://conduit.productionready.io/api/';
 
-    getListOfArticles = async (limit = 5, page= 1) => {
+    getListOfArticles = async (limit = 5, page= 1, token = '') => {
+        let headers = {};
+        if(token) {
+            headers ={
+                'Content-Type' : 'application/json;charset=utf-8',
+                    Authorization: `Token ${token}`,
+            }
+        }
+        else {
+            headers = {
+                'Content-Type': 'application/json;charset=utf-8',
+            }
+        }
         const offset = page === 1 ? 0 : (page - 1) * 5;
-        const request = await fetch(`${this.basicUrl}articles?limit=${limit}&offset=${offset}`);
+
+        const request = await fetch(`${this.basicUrl}articles?limit=${limit}&offset=${offset}`, {
+            method: 'GET',
+            headers
+        });
         if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;
@@ -113,6 +130,34 @@ class Api {
         })
         if(!request.ok) throw new Error(`Request failed`);
         const response = await request.json();
+        return response;
+    }
+
+    likedArticle = async (slug, token) => {
+        if(!token) throw new Error('No authorization');
+        const request = await fetch(`${this.basicUrl}articles/${slug}/favorite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            },
+        })
+        if(!request.ok) throw new Error('Request failed');
+        const response = request.json();
+        return response;
+    }
+
+    unLickedArticle = async (slug,token) => {
+        if(!token) throw new Error('No authorization');
+        const request = await fetch(`${this.basicUrl}articles/${slug}/favorite`,{
+            method: 'DELETE',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            },
+        })
+        if(!request.ok) throw new Error('Request failed');
+        const response = request.json();
         return response;
     }
 }

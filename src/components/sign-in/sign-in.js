@@ -8,10 +8,12 @@ import styles from './sign-in.module.scss'
 import {getLoginUser, getLoginUserFailed} from "../../redux/actions/login";
 import validate from "./validate";
 import openNotification from "../notification";
+import {updateArticlesList} from "../../redux/actions/articles";
+import {getUser} from "../../services/local-storage";
 
 
 
-const SignIn = ({setLoginUser, isError, updateIsError}) => {
+const SignIn = ({setLoginUser, isError, updateIsError, page, renewArticlesList, jToken}) => {
     const {signInWrapper,signInTitle, signInForm,signInItem, signInText, signInInput, signInSubmit, signInButton, hasAccount, errorMessage, errorInput} = styles;
 
     const classOfInput = classes( signInInput, { [errorInput] : isError === null});
@@ -27,6 +29,7 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
 
     const initHistory = useCallback(() => {
         if(isError === false) {
+            renewArticlesList(5, page, jToken)
             history.push('/');
             updateIsError(null)
         }
@@ -34,7 +37,7 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
             openNotification('error', 'Error', 'Invalid email or password');
             updateIsError(null)
         }
-    }, [history, isError, updateIsError])
+    }, [history, isError, jToken, page, renewArticlesList, updateIsError])
 
     useEffect(() => {
        initHistory()
@@ -64,18 +67,27 @@ const SignIn = ({setLoginUser, isError, updateIsError}) => {
 SignIn.defaultProps = {
     setLoginUser: ()=>{},
     updateIsError: ()=>{},
-    isError: false
+    renewArticlesList:()=>{},
+    isError: false,
+    page: 1,
+    jToken: '',
 }
 SignIn.propTypes = {
     setLoginUser: PropTypes.func,
     updateIsError: PropTypes.func,
-    isError: PropTypes.bool
+    renewArticlesList: PropTypes.func,
+    isError: PropTypes.bool,
+    page: PropTypes.number,
+    jToken: PropTypes.string
 }
 const mapSateToProps = (state) => ({
-    isError: state.loginReducer.loginFailed
+    isError: state.loginReducer.loginFailed,
+    page: state.articlesReducer.currentPage,
+    jToken: getUser() === null ? '' : getUser().token
 })
 const mapDispatchToProps = (dispatch) => ({
     setLoginUser: (email, password) => dispatch(getLoginUser(email, password)),
     updateIsError : (isError) => dispatch(getLoginUserFailed(isError)),
+    renewArticlesList: (key, page, token) => dispatch(updateArticlesList(key, page, token))
 })
 export default connect(mapSateToProps, mapDispatchToProps)(SignIn);

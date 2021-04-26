@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import {updateArticlesList} from "../../redux/actions/articles";
 import Header from "../header";
@@ -13,6 +13,7 @@ import SignIn from "../sign-in";
 import EditProfile from "../edit-profile";
 import CreateArticle from "../create-article";
 import EditArticle from "../edit-article";
+import {getUser} from "../../services/local-storage";
 
 
 
@@ -20,12 +21,12 @@ const BlogApp = () => {
     const {content, wrapper, container} = styles;
     const dispatch = useDispatch();
     const currentPage = useSelector(state => state.articlesReducer.currentPage);
+    const jToken = getUser() === null ? '' : getUser().token;
+
 
     useEffect(() => {
-        dispatch(updateArticlesList(5, currentPage));
-        
+        dispatch(updateArticlesList(5, currentPage, jToken));
     })
-
 
     
     return(

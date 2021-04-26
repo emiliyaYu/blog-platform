@@ -15,7 +15,7 @@ import {deleteArticle} from "../../redux/actions/delete-article";
 import {updateArticlesList} from "../../redux/actions/articles";
 
 
-const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, token, isDelete, removeArticle, renewArticlesList, page, nickName}) => {
+const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToken, isDelete, removeArticle, renewArticlesList, page, nickName}) => {
 
     
 
@@ -40,7 +40,7 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, token
     },[initHistory])// eslint-disable-line react-hooks/exhaustive-deps
 
     const confirm = () => {
-        removeArticle(match.params.slug, token);
+        removeArticle(match.params.slug, jToken);
     }
 
     const renderArticle = (singleArticle) => {
@@ -94,7 +94,7 @@ SingleArticle.defaultProps = {
     isLoad: true,
     isLogin: false,
     isDelete: false,
-    token: '',
+    jToken: '',
     page: 1,
     nickName: '',
     getSingleArticle: ()=>{},
@@ -107,7 +107,7 @@ SingleArticle.propTypes = {
     isLoad: PropTypes.bool,
     isLogin: PropTypes.bool,
     isDelete: PropTypes.bool,
-    token: PropTypes.string,
+    jToken: PropTypes.string,
     page: PropTypes.number,
     nickName: PropTypes.string,
     getSingleArticle: PropTypes.func,
@@ -118,15 +118,15 @@ SingleArticle.propTypes = {
 const mapStateToProps = (state) => {
     const isLogin = getIsLogin();
     const user = getUser();
-    const {token} = user;
-    const nickName = user.username
+    const jToken = user === null? '' : user.token;
+    const nickName = user === null? '' : user.username;
     return {
         article: state.singleArticleReducer.articleSuccess,
         isLoad: state.singleArticleReducer.articleRequest,
         isDelete: state.deleteArticleReducer.deleteArticleFailed,
         page: state.articlesReducer.currentPage,
         isLogin,
-        token,
+        jToken,
         nickName
     }
 

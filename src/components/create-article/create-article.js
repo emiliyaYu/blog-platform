@@ -6,12 +6,12 @@ import {useForm, useFieldArray, useController} from "react-hook-form";
 import { Input } from 'antd';
 import styles from './create-article.module.scss'
 import {createArticleFailed, createNewArticle} from "../../redux/actions/create-article";
-import {getUser} from "../../services/local-storage";
+import {getUser, getIsLogin} from "../../services/local-storage";
 import validate from "./validate";
 import openNotification from "../notification";
 import {updateArticlesList} from "../../redux/actions/articles";
 
-const CreateArticle = ({token, createArticle, isError, renewArticlesList, page}) => {
+const CreateArticle = ({jToken, createArticle, isError, renewArticlesList, page, isLogin}) => {
 
     const {register, handleSubmit, control, formState: {errors}} = useForm({
         defaultValues: {
@@ -30,11 +30,15 @@ const CreateArticle = ({token, createArticle, isError, renewArticlesList, page})
     deleteButton, addButton, createSubmit, submitButton, tagsFieldWrapper, errorMessage} = styles;
 
 
-    const handlerSubmit = (data) => createArticle(data, token);
+    const handlerSubmit = (data) => createArticle(data, jToken);
 
     const history = useHistory();
-
+    
+    // eslint-disable-next-line consistent-return
     const initHistory = useCallback(() => {
+        if(isLogin === false) {
+            history.push('/');
+        }
         if(isError === false) {
             renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
             history.push('/');
@@ -42,7 +46,9 @@ const CreateArticle = ({token, createArticle, isError, renewArticlesList, page})
         if(isError === true) {
             openNotification('error', 'Error', 'Invalid');
         }
-    }, [history, isError, page, renewArticlesList]);
+    }, [history, isError, isLogin, page, renewArticlesList]);
+
+
 
     useEffect(() => {
         initHistory();
@@ -101,23 +107,26 @@ CreateArticle.defaultProps = {
     updateError: () =>{},
     renewArticlesList: ()=>{},
     page: 1,
-    token: '',
-    isError: false
+    jToken: '',
+    isError: false,
+    isLogin: false,
 }
 CreateArticle.propTypes = {
     createArticle: PropTypes.func,
     updateError: PropTypes.func,
     renewArticlesList: PropTypes.func,
     page: PropTypes.number,
-    token: PropTypes.string,
-    isError: PropTypes.bool
+    jToken: PropTypes.string,
+    isError: PropTypes.bool,
+    isLogin: PropTypes.bool
 }
 const mapStateToProps = (state) => {
     const user = getUser();
     const isError = state.createArticleReducer.createArticleFailed;
     const page = state.articlesReducer.currentPage;
-   const {token} = user;
-   return {token, isError, page};
+    const jToken = user === null? '' : user.token;
+    const isLogin = getIsLogin();
+   return {jToken, isError, page, isLogin};
 }
 const mapDispatchToProps = (dispatch) => ({
     createArticle: (data, token) => dispatch(createNewArticle(data, token)),

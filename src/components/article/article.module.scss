@@ -54,3 +54,20 @@
   font-size: 12px;
   color: rgba(0, 0, 0, 0.5);
 }
+.titleInfo {
+  display: flex;
+  align-items: baseline;
+}
+.articleLikes {
+  margin-left: 10px;
+  font-size: 18px;
+}
+.likeOutLined {
+  font-size: 18px;
+}
+.likeField {
+  color: #1890FF;
+}
+.likeCount {
+  margin-left: 10px;
+}

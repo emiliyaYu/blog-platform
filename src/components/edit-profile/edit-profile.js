@@ -4,22 +4,23 @@ import {useHistory} from 'react-router-dom';
 import {connect} from "react-redux";
 import {useForm} from "react-hook-form";
 import styles from './edit-profile.module.scss';
-import {getUser} from "../../services/local-storage";
+import {getIsLogin, getUser} from "../../services/local-storage";
 import updateUser, {editProfileFailed} from "../../redux/actions/edit-profile";
 import openNotification from "../notification";
 import validate from "./validate";
 import {updateArticlesList} from "../../redux/actions/articles";
 
-const EditProfile = ({updateProfile, token, isError, updateIsError, page, renewArticlesList}) => {
+const EditProfile = ({updateProfile, jToken, isError, updateIsError, page, renewArticlesList, isLogin}) => {
     const {editProfileWrapper,editProfileTitle, profileWrapper, profileItem, profileTitle, profileInput, submitWrapper, submitButton, errorMessage} = styles;
 
     const {register, handleSubmit, formState: {errors}} = useForm();
 
-    const handlerSubmit = (data) => updateProfile(data, token)
+    const handlerSubmit = (data) => updateProfile(data, jToken)
 
     const history = useHistory();
 
     const initHistory = useCallback(() => {
+        if(isLogin === false) history.push('/')
         if(isError === false) {
             renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
             history.push('/');
@@ -29,7 +30,7 @@ const EditProfile = ({updateProfile, token, isError, updateIsError, page, renewA
             openNotification('error', 'Error', 'Update failed');
             updateIsError(null);
         }
-    },[isError, renewArticlesList, page, history, updateIsError])
+    },[isLogin, history, isError, renewArticlesList, page, updateIsError])
 
     useEffect(() => initHistory(),[initHistory])
 
@@ -70,24 +71,27 @@ EditProfile.defaultProps = {
     renewArticlesList: ()=>{},
     page: 1,
     updateIsError: ()=>{},
-    token: '',
+    jToken: '',
     isError: false,
+    isLogin: false,
 }
 EditProfile.propTypes = {
     updateProfile: PropTypes.func,
     updateIsError: PropTypes.func,
     renewArticlesList: PropTypes.func,
     page: PropTypes.number,
-    token: PropTypes.string,
-    isError: PropTypes.bool
+    jToken: PropTypes.string,
+    isError: PropTypes.bool,
+    isLogin: PropTypes.bool
 }
 const mapStateToProps = (state) => {
     const user = getUser();
-    const {token} = user;
+    const jToken = user === null? '' : user.token;
     return {
-        token,
+        jToken,
         page: state.articlesReducer.currentPage,
-        isError: state.updateEditProfile.editProfileFailed
+        isError: state.updateEditProfile.editProfileFailed,
+        isLogin: getIsLogin()
     }
 }
 

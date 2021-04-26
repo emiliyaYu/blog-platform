@@ -6,12 +6,12 @@ import loginReducer from "./login";
 import createArticleReducer from "./create-article";
 import deleteArticleReducer from "./delete-article";
 import editArticleReducer from "./edit-article";
-
-import logOutReducer from "./logout";
 import updateEditProfile from "./edit-profile";
+import favoritesArticleReducer from "./favorite-article";
 
 
 const appReducer = combineReducers({articlesReducer, singleArticleReducer,
-registrationReducer,loginReducer, logOutReducer, updateEditProfile, createArticleReducer, deleteArticleReducer, editArticleReducer});
+    registrationReducer,loginReducer, updateEditProfile, createArticleReducer, deleteArticleReducer, editArticleReducer,
+    favoritesArticleReducer});
 
 export default appReducer;

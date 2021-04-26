@@ -19,10 +19,11 @@ const articlesReducer = (state = initialState, {type, payload}) => {
                 ...state,
                 articlesSuccess: payload,
             }
+
         case articles.GET_ARTICLES_FAILED:
             return{
                 ...state,
-                articlesSuccess: false,
+                articlesFailed: false,
             }
         case articles.CURRENT_PAGE_OF_ARTICLES:
             return{
