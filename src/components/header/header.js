@@ -7,10 +7,12 @@ import classes from 'classnames';
 import styles from './header.module.scss'
 import {getIsLogin, getUser, removeUser} from "../../services/local-storage";
 import {isLogIn} from "../../redux/actions/login";
+import {updateArticlesList} from "../../redux/actions/articles";
+import * as path from '../../routes/index';
 
 
 
-const Header = ({user, updateIsLogin}) => {
+const Header = ({user, updateIsLogin, page, renewArticlesList}) => {
     const {header, titleHeader, buttonHeaderWrapper, buttonHeader, SignIn, SignUp, createArticleButton, userName, logOutButton, buttonAuthWrapper, link, avatar} = styles;
     const signInClass = classes(buttonHeader, SignIn);
     const signUpClass = classes(buttonHeader, SignUp);
@@ -18,17 +20,19 @@ const Header = ({user, updateIsLogin}) => {
     const isLogin = getIsLogin();
 
     const handlerLogOut = () => {
+
         updateIsLogin(false);
         removeUser();
+        renewArticlesList(5, page) // обновляем статьи один раз, когда выходим из аккаунта
     }
 
 
-    const defaultImage = "https://static.productionready.io/images/smiley-cyrus.jpg"; // дефотная картинка
+    const defaultImage = "https://static.productionready.io/images/smiley-cyrus.jpg"; // дефотная картинка для аватара
 
     const NotAuthorized = () => ( // когда пользователь не авторизирован
             <div className={buttonHeaderWrapper}>
-                <Link className={link} to='/sign_in'><button type='button' className={signInClass}>Sign In</button></Link>
-                <Link to='/sign_up'><button type='button' className={signUpClass}>Sign Up</button></Link>
+                <Link className={link} to={path.signIn}><button type='button' className={signInClass}>Sign In</button></Link>
+                <Link to={path.signUp}><button type='button' className={signUpClass}>Sign Up</button></Link>
             </div>
         )
     const Authorized = () => { // когда пользователь авторизирован
@@ -53,7 +57,9 @@ const Header = ({user, updateIsLogin}) => {
 }
 Header.defaultProps = {
     user: {},
-    updateIsLogin: ()=>{}
+    page: 1,
+    updateIsLogin: ()=>{},
+    renewArticlesList:()=>{}
 }
 Header.propTypes = {
     user: PropTypes.shape({
@@ -61,16 +67,17 @@ Header.propTypes = {
         image: PropTypes.string,
 
     }),
-    updateIsLogin: PropTypes.func
+    page: PropTypes.number,
+    updateIsLogin: PropTypes.func,
+    renewArticlesList: PropTypes.func
 }
-const mapStateToProps = () => {
-    const userData = getUser();
-    return {
-        user: userData
-    }
-}
+const mapStateToProps = (state) => ({
+        user: getUser(),
+        page: state.articlesReducer.currentPage,
+    })
 const mapDispatchToProps = (dispatch) =>({
-  updateIsLogin: (isLogin) => dispatch(isLogIn(isLogin))
+  updateIsLogin: (isLogin) => dispatch(isLogIn(isLogin)),
+  renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

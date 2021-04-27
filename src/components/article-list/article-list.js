@@ -16,11 +16,11 @@ const ArticleList = ({articlesData, isLoading, jToken, page, renewArticlesList, 
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(()=>{
-       if(isErrorOfLiked === false || isErrorOfUnLiked === false || isLogin === false) {
+       if(isErrorOfLiked === false || isErrorOfUnLiked === false) {
            renewArticlesList(5, page, jToken);
            updateIsErrorOfLiked(null);
            updateIsErrorOfUnLiked(null)
-        }
+       }
        if(isErrorOfLiked === true) {
            openNotification('error', 'Error', 'No authorization.')
            updateIsErrorOfLiked(null);
@@ -51,7 +51,7 @@ ArticleList.defaultProps = {
     isLoading: true,
     likedArticle: {},
     isErrorOfLiked: false,
-    isErrorOfUnLiked: PropTypes.bool,
+    isErrorOfUnLiked: false,
     renewArticlesList: ()=>{},
     jToken: '',
     page: 1,

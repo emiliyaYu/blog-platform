@@ -10,8 +10,11 @@ import {getUser, getIsLogin} from "../../services/local-storage";
 import validate from "./validate";
 import openNotification from "../notification";
 import {updateArticlesList} from "../../redux/actions/articles";
+import * as path from '../../routes/index';
 
 const CreateArticle = ({jToken, createArticle, isError, renewArticlesList, page, isLogin}) => {
+
+    console.log(isLogin)
 
     const {register, handleSubmit, control, formState: {errors}} = useForm({
         defaultValues: {
@@ -37,11 +40,11 @@ const CreateArticle = ({jToken, createArticle, isError, renewArticlesList, page,
     // eslint-disable-next-line consistent-return
     const initHistory = useCallback(() => {
         if(isLogin === false) {
-            history.push('/');
+            history.push(path.home);
         }
         if(isError === false) {
             renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
-            history.push('/');
+            history.push(path.home);
         }
         if(isError === true) {
             openNotification('error', 'Error', 'Invalid');

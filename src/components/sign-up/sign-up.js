@@ -1,32 +1,43 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useForm } from "react-hook-form";
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
+import {Link, useHistory} from 'react-router-dom';
 import classes from 'classnames';
 import styles from './sign-up.module.scss'
-import {getUser, registrationFailed} from "../../redux/actions/registration";
+import {registrationFailed, getUser} from "../../redux/actions/registration";
 import validate from "./validate";
 import openNotification from "../notification";
+import * as path from '../../routes/index';
 
 const SignUp = ({setUser, isError, updateError}) => {
+
     const {signUpWrapper, signUpTitle, registerWrapper, registerTitle, registerInput, personalInfoWrapper, personalInfo, personalInfoText, hasAccount,submitWrapper, registerItem, submitButton,
         personalInfoCheck, errorMessage, errorInput} = styles;
-
-    const classOfInput = classes(registerInput, {[errorInput] : isError === null})
 
     const {register, handleSubmit, formState: {errors}, watch} = useForm();
 
     const currentPassword = watch('registerPassword');
 
+    const history = useHistory();
+
+    const classOfInput = classes(registerInput, {[errorInput] : Object.keys(errors).length !== 0});
+
     const handlerSubmit = (data) => {
        const {username, registerEmail, registerPassword} = data;
-       if (isError === true) {
-           openNotification('error', 'Error', 'Request failed');
-           updateError(null);
-       }
-
-        return setUser(username, registerEmail, registerPassword);
+       setUser(username, registerEmail, registerPassword);
     }
+
+    useEffect(() => {
+        if (isError === true) {
+            openNotification('error', 'Error', 'Request failed.');
+            updateError(null);
+        }
+        if(isError === false) {
+            history.push('/sign_in');
+            updateError(null);
+        }
+    },[history, isError, updateError])
 
     return(
         <form className={signUpWrapper} onSubmit={handleSubmit(handlerSubmit)}>
@@ -64,7 +75,7 @@ const SignUp = ({setUser, isError, updateError}) => {
             <fieldset className={submitWrapper}>
                 <button type='button' className={submitButton} onClick={handleSubmit(handlerSubmit)}>Create</button>
                 <span className={hasAccount}>
-                    Already have an account? <a>Sign In.</a>
+                    Already have an account? <Link to={path.signIn}>Sign In.</Link>
                 </span>
             </fieldset>
         </form>

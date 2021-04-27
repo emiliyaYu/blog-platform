@@ -8,6 +8,7 @@ import styles from './edit-article.module.scss';
 import {updateArticle} from "../../redux/actions/edit-article";
 import {getIsLogin, getUser} from "../../services/local-storage";
 import {updateArticlesList} from "../../redux/actions/articles";
+import * as path from '../../routes/index';
 
 const EditArticle = ({article, jToken, editArticle, isError, page, renewArticlesList, isLogin}) => {
     const {TextArea} = Input;
@@ -42,10 +43,10 @@ const EditArticle = ({article, jToken, editArticle, isError, page, renewArticles
     const history = useHistory();
     
     const initHistory = useCallback(() => {
-        if(isLogin === false) history.push('/');
+        if(isLogin === false) history.push(path.home);
         if(isError === false){
             renewArticlesList(5, page);
-            history.push('/article/:slug');
+            history.push(path.singleArticle);
         }
     },[history, isError, isLogin, page, renewArticlesList])
 

@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   width: 384px;
-  height: 599px;
+  min-height: 550px;
+  max-height: 700px;
   align-self: center;
   align-items: center;
   background-color: white;
@@ -15,6 +16,8 @@
   font-size: 20px;
   line-height: 28px;
   font-weight: 800;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 .registerWrapper{
   display: flex;
@@ -38,6 +41,14 @@
   height: 40px;
   padding: 8px;
   border-radius: 5px;
+  outline: none;
+  &:hover{
+    border: 1px solid #1890FF;
+  }
+  &:focus {
+    border: 1px solid #1890FF;
+    box-shadow: 0 0 3px 0 rgba(43, 142, 217, 0.3);
+  }
 }
 .personalInfoWrapper {
   position: relative;
@@ -55,6 +66,7 @@
   display: flex;
   justify-content: space-around;
   align-items: baseline;
+  margin-bottom: 10px;
 }
 .personalInfoText{
   word-break: break-word;
@@ -86,6 +98,7 @@
 .hasAccount{
   color: rgba(0, 0, 0, 0.5);
   margin-top: 5px;
+  margin-bottom: 10px;
 }
 .errorMessage {
   color: #F5222D;

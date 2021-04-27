@@ -27,8 +27,23 @@ class Api {
         return response;
     }
 
-    getSingleArticle = async (slug) => {
-        const request = await fetch(`${this.basicUrl}articles/${slug}`);
+    getSingleArticle = async (slug, token = '') => {
+        let headers = {};
+        if(token) {
+            headers ={
+                'Content-Type' : 'application/json;charset=utf-8',
+                Authorization: `Token ${token}`,
+            }
+        }
+        else {
+            headers = {
+                'Content-Type': 'application/json;charset=utf-8',
+            }
+        }
+        const request = await fetch(`${this.basicUrl}articles/${slug}`, {
+            method: 'GET',
+            headers
+        });
         if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;

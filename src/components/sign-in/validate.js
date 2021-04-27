@@ -10,7 +10,10 @@ const validate = {
         }
     },
     validatePassword: {
-        required: true,
+        required: {
+            value: true,
+            message: "Can't be empty."
+        },
     }
 }
 export default validate;

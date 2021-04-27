@@ -1,5 +1,4 @@
 import * as favorite from '../../actions/favorites-article/index';
-import {setLikedArticles} from "../../../services/local-storage";
 
 const initialState = {
     favoriteArticleRequest: false,
@@ -18,7 +17,6 @@ const favoritesArticleReducer = (state = initialState, {type, payload}) => {
                 favoriteArticleRequest: payload
             }
         case favorite.FAVORITE_ARTICLE_SUCCESS:
-            setLikedArticles(payload.article)
             return{
                 ...state,
                 favoriteArticleSuccess: payload

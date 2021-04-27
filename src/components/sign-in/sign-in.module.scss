@@ -38,6 +38,14 @@
   padding: 8px;
   border-radius: 5px;
   width: 320px;
+  outline: none;
+  &:hover{
+    border: 1px solid #1890FF;
+  }
+  &:focus {
+    border: 1px solid #1890FF;
+    box-shadow: 0 0 3px 0 rgba(43, 142, 217, 0.3);
+  }
 }
 .signInSubmit{
   display: flex;

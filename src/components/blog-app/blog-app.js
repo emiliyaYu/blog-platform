@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import {useDispatch, useSelector} from "react-redux";
-import {updateArticlesList} from "../../redux/actions/articles";
+import {useDispatch} from "react-redux";
+import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
 import Header from "../header";
 import MainPagination from "../pagination";
 import ArticleList from "../article-list";
@@ -14,18 +14,19 @@ import EditProfile from "../edit-profile";
 import CreateArticle from "../create-article";
 import EditArticle from "../edit-article";
 import {getUser} from "../../services/local-storage";
+import * as path from '../../routes/index';
 
 
 
 const BlogApp = () => {
     const {content, wrapper, container} = styles;
     const dispatch = useDispatch();
-    const currentPage = useSelector(state => state.articlesReducer.currentPage);
     const jToken = getUser() === null ? '' : getUser().token;
 
 
     useEffect(() => {
-        dispatch(updateArticlesList(5, currentPage, jToken));
+        dispatch(updateArticlesList(5, 1, jToken));
+        dispatch(setCurrentPage(1));
     })
 
     
@@ -35,29 +36,29 @@ const BlogApp = () => {
             <Header/>
             <div className={wrapper}>
                 <Switch>
-                    <Route path='/' exact render={() => (
-                           <div className={content}>
-                               <ArticleList/>
-                               <MainPagination/>
-                           </div>
-                       )
+                    <Route path={path.home} exact render={() => (
+                            <div className={content}>
+                                <ArticleList/>
+                                <MainPagination/>
+                            </div>
+                        )
                     }/>
-                    <Route path='/article/:slug' exact render={({match}) => <div className={content}>
+                    <Route path={path.singleArticle} exact render={({match}) => <div className={content}>
                         <SingleArticle match={match}/>
                     </div>} />
-                    <Route path='/sign_up' render={() => <div className={content}>
+                    <Route path={path.signUp} render={() => <div className={content}>
                         <SignUp/>
                     </div>}/>
-                    <Route path='/sign_in' render={() => <div className={content}>
+                    <Route path={path.signIn} render={() => <div className={content}>
                         <SignIn/>
                     </div>}/>
-                    <Route path='/profile' render={() => <div className={content}>
+                    <Route path={path.profile} render={() => <div className={content}>
                         <EditProfile/>
                     </div>}/>
-                    <Route path='/new-article' render={() => <div className={content}>
+                    <Route path={path.createArticle} render={() => <div className={content}>
                         <CreateArticle/>
                     </div>}/>
-                    <Route path='/article/edit-article/:slug' exact render={({match}) => <div className={content}>
+                    <Route path={path.editArticle} exact render={({match}) => <div className={content}>
                         <EditArticle match={match}/>
                     </div>}/>
                 </Switch>
