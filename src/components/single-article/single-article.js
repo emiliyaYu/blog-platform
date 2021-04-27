@@ -79,7 +79,7 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToke
             const {username, image} = author;
             const tags = tagList.map((tag) => <Tag key={uniqueId('id')}>{tag}</Tag>)
 
-             const likeSubmit = () => {
+             const handleLikeSubmit = () => {
                 if(favorited === false) {
                     likesArticle(slug, jToken);
 
@@ -98,7 +98,7 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToke
                                 <div className={headerArticle}>
                                     <span className={articleTitle}>{title}</span>
                                     <div className={articleLikes}>
-                                        {favorited ?  <HeartFilled style={{color: '#1890FF', cursor: 'pointer'}} onClick={likeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={likeSubmit}/>}
+                                        {favorited ?  <HeartFilled style={{color: '#1890FF', cursor: 'pointer'}} onClick={handleLikeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={handleLikeSubmit}/>}
                                         <span className={likeCount}>{favoritesCount}</span>
                                     </div>
                                 </div>

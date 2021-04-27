@@ -19,7 +19,7 @@ const Article = ({title, tagList, user, date, slug, description, likesCount, isF
     const {articleWrapper, articleInfo, articleTitle, articleDesc, userInfo, nameAndDate, userName, articleDate, articleText, articleLikes, titleInfo, likeOutLined, likeCount} = styles;
 
 
-    const likeSubmit = () => {
+    const handleLikeSubmit = () => {
         if(isFavorite === false){
             likesArticle(slug, jToken);
         }
@@ -38,7 +38,7 @@ const Article = ({title, tagList, user, date, slug, description, likesCount, isF
                                 <span className={articleTitle}>{title}</span>
                             </Link>
                             <div className={articleLikes}>
-                                {isFavorite ?  <HeartFilled style={{color: '#1890FF'}} onClick={likeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={likeSubmit}/>}
+                                {isFavorite ?  <HeartFilled style={{color: '#1890FF'}} onClick={handleLikeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={handleLikeSubmit}/>}
 
                                 <span className={likeCount}>{likesCount}</span>
                             </div>
