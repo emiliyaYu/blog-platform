@@ -34,7 +34,7 @@ const SignUp = ({setUser, isError, updateError}) => {
             updateError(null);
         }
         if(isError === false) {
-            history.push('/sign_in');
+            history.push(path.signIn);
             updateError(null);
         }
     },[history, isError, updateError])
