@@ -44,7 +44,7 @@ const SignUp = ({setUser, isError, updateError}) => {
             <span className={signUpTitle}>Create new account</span>
             <fieldset className={registerWrapper}>
                 <label className={registerItem}>
-                    <span className={registerTitle}>username</span>
+                    <span className={registerTitle}>Username</span>
                     <input className={classOfInput} type='text' placeholder='username'
                            {...register('username', {...validate.validateUsername})}/>
                     {errors.username && <p className={errorMessage}>{errors.username.message}</p>}
