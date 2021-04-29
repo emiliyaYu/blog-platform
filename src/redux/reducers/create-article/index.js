@@ -15,7 +15,7 @@ const createArticleReducer = (state=initialState, {type, payload}) => {
         case create.CREATE_ARTICLE_SUCCESS:
             return{
                 ...state,
-                createArticleRequest: payload,
+                createArticleSuccess: payload,
             }
         case create.CREATE_ARTICLE_FAILED:
             return{

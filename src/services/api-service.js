@@ -1,52 +1,56 @@
+import {getItem} from "./local-storage";
 
 
 class Api {
     basicUrl = 'https://conduit.productionready.io/api/';
 
-    getListOfArticles = async (limit = 5, page= 1, token = '') => {
-        let headers = {};
-        if(token) {
-            headers ={
-                'Content-Type' : 'application/json;charset=utf-8',
-                    Authorization: `Token ${token}`,
-            }
-        }
-        else {
-            headers = {
-                'Content-Type': 'application/json;charset=utf-8',
-            }
-        }
-        const offset = page === 1 ? 0 : (page - 1) * 5;
+    user = getItem('user');
 
-        const request = await fetch(`${this.basicUrl}articles?limit=${limit}&offset=${offset}`, {
-            method: 'GET',
-            headers
-        });
+    userToken = this.user === null? '' : this.user.token
+
+    getRequest = async (url, options = {}) => {
+        const headers = {
+            "Content-Type": `application/json;charset=utf-8`,
+        }
+        const newOptions = {headers, ...options}
+        const request = await fetch(`${url}`, newOptions);
         if(!request.ok) throw new Error('Request failed');
         const response = await request.json();
         return response;
     }
 
-    getSingleArticle = async (slug, token = '') => {
+    getRequestWithToken = async (url, options) => {
         let headers = {};
-        if(token) {
-            headers ={
-                'Content-Type' : 'application/json;charset=utf-8',
+        const token = this.userToken;
+        if (token) {
+            headers = {
+                "Content-Type": `application/json;charset=utf-8`,
                 Authorization: `Token ${token}`,
             }
         }
-        else {
-            headers = {
-                'Content-Type': 'application/json;charset=utf-8',
-            }
-        }
-        const request = await fetch(`${this.basicUrl}articles/${slug}`, {
+        const newOptions = {headers, ...options};
+        const request = await this.getRequest(url, newOptions);
+        return request;
+    }
+
+
+    getListOfArticles = async (limit = 5, page= 1) => {
+        const offset = page === 1 ? 0 : (page - 1) * 5;
+
+        const options = {
             method: 'GET',
-            headers
-        });
-        if(!request.ok) throw new Error('Request failed');
-        const response = await request.json();
-        return response;
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles?limit=${limit}&offset=${offset}`, options)
+        return request;
+    }
+
+    getSingleArticle = async (slug) => {
+        const options = {
+            method: 'GET',
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles/${slug}`, options)
+
+        return request;
     }
 
     registration = async (username, email, password) => {
@@ -57,16 +61,12 @@ class Api {
             'password': password
             }
         }
-        const request = await fetch(`${this.basicUrl}users`, {
+        const options = {
             method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-            },
             body: JSON.stringify(user)
-        })
-        if(!request.ok) throw new Error('Request failed');
-        const response = await request.json();
-        return response;
+        }
+        const request = await this.getRequest(`${this.basicUrl}users`, options)
+        return request;
     }
 
     login = async (email, password) => {
@@ -76,104 +76,70 @@ class Api {
                 'password' : password,
             }
         }
-        const request = await fetch(`${this.basicUrl}users/login`, {
+        const options = {
             method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-            },
             body: JSON.stringify(user)
-        });
-        if(!request.ok) throw new Error('Request failed');
+        }
+        const requset = await this.getRequest(`${this.basicUrl}users/login`, options)
 
-        const response = await request.json();
-        return response;
+        return requset;
 
     }
 
-    editProfile = async (userData, token) => {
+    editProfile = async (userData) => {
        if(!userData) throw new Error('Missing data');
        const user = {...userData};
-       const request = await fetch(`${this.basicUrl}user`, {
+       const options = {
            method: 'PUT',
-           headers: {
-               'Content-Type' : 'application/json;charset=utf-8',
-               Authorization: `Token ${token}`,
-           },
            body: JSON.stringify(user)
-       })
-        if(!request.ok) throw new Error('Request failed');
-        const response = request.json();
-        return response;
+       }
+       const request = await this.getRequestWithToken(`${this.basicUrl}user`, options)
+        return request;
     }
 
-    createArticle = async (newArticle, token) => {
+    createArticle = async (newArticle) => {
         if(!newArticle) throw new Error('Missing data');
         const article = { article: {...newArticle}};
-        const request = await fetch(`${this.basicUrl}articles`, {
+        const options = {
             method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-                Authorization: `Token ${token}`,
-            },
             body: JSON.stringify(article)
-        })
-        if(!request.ok) throw new Error('Request failed');
-        const response = request.json();
-        return response;
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles`, options)
+        return request;
     }
 
-    deleteArticle = async (slug, token) => {
-        const request = await fetch(`${this.basicUrl}articles/${slug}`,{
+    deleteArticle = async (slug) => {
+
+        const options = {
             method: 'DELETE',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-                Authorization: `Token ${token}`,
-            },
-        });
-        if(!request.ok) throw new Error('Request failed');
+        }
+        await this.getRequestWithToken(`${this.basicUrl}articles/${slug}`, options);
     }
 
-    editArticle = async (data, slug, token) => {
+    editArticle = async (data, slug) => {
         const newArticle = {'article': {...data}};
-        const request = await fetch(`${this.basicUrl}articles/${slug}`, {
+        const options = {
             method: 'PUT',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-                Authorization: `Token ${token}`,
-            },
             body: JSON.stringify(newArticle)
-        })
-        if(!request.ok) throw new Error(`Request failed`);
-        const response = await request.json();
-        return response;
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles/${slug}`, options)
+        return request;
     }
 
-    likedArticle = async (slug, token) => {
-        if(!token) throw new Error('No authorization');
-        const request = await fetch(`${this.basicUrl}articles/${slug}/favorite`, {
+    likedArticle = async (slug) => {
+        const options = {
             method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-                Authorization: `Token ${token}`,
-            },
-        })
-        if(!request.ok) throw new Error('Request failed');
-        const response = request.json();
-        return response;
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles/${slug}/favorite`, options)
+        return request;
     }
 
-    unLickedArticle = async (slug,token) => {
-        if(!token) throw new Error('No authorization');
-        const request = await fetch(`${this.basicUrl}articles/${slug}/favorite`,{
+    unLickedArticle = async (slug) => {
+        const options = {
             method: 'DELETE',
-            headers: {
-                'Content-Type' : 'application/json;charset=utf-8',
-                Authorization: `Token ${token}`,
-            },
-        })
-        if(!request.ok) throw new Error('Request failed');
-        const response = request.json();
-        return response;
+        }
+        const request = await this.getRequestWithToken(`${this.basicUrl}articles/${slug}/favorite`, options)
+        return request;
     }
 }
 export default Api;

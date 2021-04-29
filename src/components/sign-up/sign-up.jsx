@@ -7,10 +7,10 @@ import classes from 'classnames';
 import styles from './sign-up.module.scss'
 import {registrationFailed, getUser} from "../../redux/actions/registration";
 import validate from "./validate";
-import openNotification from "../notification";
+import openNotification from "../../services/notification";
 import * as path from '../../routes/index';
 
-const SignUp = ({setUser, isError, updateError}) => {
+const SignUp = ({setUser, isError, updateError, isLoad}) => {
 
     const {signUpWrapper, signUpTitle, registerWrapper, registerTitle, registerInput, personalInfoWrapper, personalInfo, personalInfoText, hasAccount,submitWrapper, registerItem, submitButton,
         personalInfoCheck, errorMessage, errorInput} = styles;
@@ -45,35 +45,35 @@ const SignUp = ({setUser, isError, updateError}) => {
             <fieldset className={registerWrapper}>
                 <label className={registerItem}>
                     <span className={registerTitle}>Username</span>
-                    <input className={classOfInput} type='text' placeholder='username'
+                    <input className={classOfInput} type='text' placeholder='username' disabled={isLoad}
                            {...register('username', {...validate.validateUsername})}/>
                     {errors.username && <p className={errorMessage}>{errors.username.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Email</span>
-                    <input className={classOfInput} type='email' placeholder='Email' {...register('registerEmail', {...validate.validateEmail})}/>
+                    <input className={classOfInput} type='email' placeholder='Email' disabled={isLoad} {...register('registerEmail', {...validate.validateEmail})}/>
                     {errors.registerEmail && <p className={errorMessage}>{errors.registerEmail.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Password</span>
-                    <input className={classOfInput} type='password' placeholder='Password'  {...register('registerPassword', {...validate.validatePassword})}/>
+                    <input className={classOfInput} type='password' placeholder='Password'  disabled={isLoad} {...register('registerPassword', {...validate.validatePassword})}/>
                     {errors.registerPassword && <p className={errorMessage}>{errors.registerPassword.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Repeat password</span>
-                    <input className={classOfInput} type='password'  placeholder='Repeat password' {...register('registerRepeatPassword', {validate: value => value === currentPassword})}/>
+                    <input className={classOfInput} type='password'  placeholder='Repeat password' disabled={isLoad} {...register('registerRepeatPassword', {validate: value => value === currentPassword})}/>
                     {errors.registerRepeatPassword && <p className={errorMessage}>Password does not match.</p>}
                 </label>
                 <fieldset className={personalInfoWrapper}>
                     <label className={personalInfo}>
-                        <input type='checkbox' name='personalInfoAgree' className={personalInfoCheck} {...register('personalInfo', {...validate.validatePersonalInfo})}/>
+                        <input type='checkbox' name='personalInfoAgree' className={personalInfoCheck} disabled={isLoad} {...register('personalInfo', {...validate.validatePersonalInfo})}/>
                         <span className={personalInfoText}>I agree to the processing of my personal information</span>
                     </label>
                     {errors.personalInfo && <p className={errorMessage}>{errors.personalInfo.message}</p>}
                 </fieldset>
             </fieldset>
             <fieldset className={submitWrapper}>
-                <button type='button' className={submitButton} onClick={handleSubmit(handlerSubmit)}>Create</button>
+                <button type='button' className={submitButton} onClick={handleSubmit(handlerSubmit)} disabled={isLoad}>Create</button>
                 <span className={hasAccount}>
                     Already have an account? <Link to={path.signIn}>Sign In.</Link>
                 </span>
@@ -85,14 +85,17 @@ SignUp.defaultProps = {
     setUser: ()=>{},
     updateError: ()=>{},
     isError: false,
+    isLoad: false
 }
 SignUp.propTypes = {
     setUser: PropTypes.func,
     updateError: PropTypes.func,
     isError: PropTypes.bool,
+    isLoad: PropTypes.bool
 }
 const mapStateToProps = (state) => ({
-    isError: state.registrationReducer.registrationFailed
+    isError: state.registrationReducer.registrationFailed,
+    isLoad: state.registrationReducer.registrationRequest
 })
 const mapDispatchToProps = (dispatch) => ({
     setUser: (username, email, password) => dispatch(getUser(username, email, password)),

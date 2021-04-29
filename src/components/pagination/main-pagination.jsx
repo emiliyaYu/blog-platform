@@ -4,17 +4,14 @@ import PropTypes from 'prop-types';
 import { Pagination } from 'antd';
 import styles from './main-pagination.module.scss'
 import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
-import {getUser} from "../../services/local-storage";
 
 const MainPagination = ({setPage, isLoading, currentPage}) => {
 
     const dispatch = useDispatch();
 
-    const jToken = getUser() === null ? '' : getUser().token;
-
     const changePage = (page) => {
         setPage(page)
-        dispatch(updateArticlesList(5, page, jToken))
+        dispatch(updateArticlesList(5, page))
     }
     if(isLoading === true) {
         return null

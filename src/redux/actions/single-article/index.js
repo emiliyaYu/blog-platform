@@ -11,12 +11,12 @@ export const getSingleArticleSuccess = createAction(GET_SINGLE_ARTICLE_SUCCESS, 
 export const getSingleArticleFailed = createAction(GET_SINGLE_ARTICLE_FAILED, isError => isError);
 export const isSingleArticle = createAction(IS_SINGLE_ARTICLE, isSingle => isSingle)
 
-export const getArticle = (slug, token) => async (dispatch) => {
+export const getArticle = (slug) => async (dispatch) => {
     const api = new Api();
     dispatch(getSingleArticleRequest(true));
     dispatch(getSingleArticleFailed(false));
     try {
-        const request = await api.getSingleArticle(slug, token);
+        const request = await api.getSingleArticle(slug);
         dispatch(getSingleArticleSuccess(request));
         dispatch(getSingleArticleRequest(false));
         dispatch(isSingleArticle(true))

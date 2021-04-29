@@ -9,11 +9,11 @@ export const deleteArticleRequest = createAction(DELETE_ARTICLE_REQUEST, isLoad=
 export const deleteArticleSuccess = createAction(DELETE_ARTICLE_SUCCESS, isSuccess=>isSuccess)
 export const deleteArticleFailed = createAction(DELETE_ARTICLE_FAILED, isError=>isError);
 
-export const deleteArticle = (slug, token) => async (dispatch) => {
+export const deleteArticle = (slug) => async (dispatch) => {
     const api = new Api();
     dispatch(deleteArticleRequest(true));
     try {
-       await api.deleteArticle(slug, token);
+       await api.deleteArticle(slug);
        dispatch(deleteArticleSuccess(true));
        dispatch(deleteArticleRequest(false));
        dispatch(deleteArticleFailed(false))

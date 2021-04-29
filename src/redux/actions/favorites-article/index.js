@@ -19,11 +19,11 @@ export const unFavoriteArticleSuccess = createAction(UN_FAVORITE_ARTICLE_SUCCESS
 export const unFavoriteArticleFailed = createAction(UN_FAVORITE_ARTICLE_FAILED, isError => isError);
 
 
-export const favoriteArticle = (slug, token) => async (dispatch) => {
+export const favoriteArticle = (slug) => async (dispatch) => {
     const api = new Api();
     dispatch(favoriteArticleRequest(true));
     try{
-        const request = await api.likedArticle(slug,token);
+        const request = await api.likedArticle(slug);
         dispatch(favoriteArticleSuccess(request));
         dispatch(favoriteArticleRequest(false));
         dispatch(favoriteArticleFailed(false));

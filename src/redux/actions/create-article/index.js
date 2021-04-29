@@ -9,11 +9,11 @@ export const createArticleRequest = createAction(CREATE_ARTICLE_REQUEST, isLoad=
 export const createArticleSuccess = createAction(CREATE_ARTICLE_SUCCESS, newArticle=>newArticle);
 export const createArticleFailed = createAction(CREATE_ARTICLE_FAILED, isError=>isError);
 
-export const createNewArticle = (newArticle, token) => async (dispatch) => {
+export const createNewArticle = (newArticle) => async (dispatch) => {
     const api = new Api();
     dispatch(createArticleRequest(true));
     try{
-        const request = await api.createArticle(newArticle, token);
+        const request = await api.createArticle(newArticle);
         const {article} = request;
         dispatch(createArticleSuccess(article));
         dispatch(createArticleRequest(false));

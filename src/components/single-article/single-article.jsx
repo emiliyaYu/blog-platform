@@ -7,11 +7,15 @@ import ReactMarkdown from "react-markdown";
 import {Avatar, Tag, Popconfirm} from "antd";
 import Loader from "react-loader-spinner";
 import {HeartFilled, HeartOutlined} from "@ant-design/icons";
-import {getArticle, isSingleArticle,} from "../../redux/actions/single-article";
+import {
+    getArticle, getSingleArticleFailed, getSingleArticleRequest,
+    getSingleArticleSuccess,
+    isSingleArticle,
+} from "../../redux/actions/single-article";
 import styles from './single-article.module.scss'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import convertDate from "../../utilts/convertDate";
-import {getIsLogin, getUser} from "../../services/local-storage";
+import {getItem} from "../../services/local-storage";
 import {deleteArticle, deleteArticleFailed} from "../../redux/actions/delete-article";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
@@ -21,13 +25,12 @@ import {
     unFavoriteArticle,
     unFavoriteArticleFailed
 } from "../../redux/actions/favorites-article";
-import openNotification from "../notification";
+import openNotification from "../../services/notification";
 
 
 
-const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToken, isErrorOfDelete, removeArticle, renewArticlesList, page, nickName, updateStatusOfDeleteError, likesArticle, unLikesArticle,
-                       isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked}) => {
-
+const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle, renewArticlesList, page, nickName, updateStatusOfDeleteError, likesArticle, unLikesArticle,
+                        isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked, isErrorOfGetSingleArticle, updateArticle, updateIsError, updateIsLoad}) => {
 
     const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleBody, loader, articleDate, userActions,
         buttonEdit, buttonDelete, articleLikes, likeOutLined, likeCount, headerArticle} = styles;
@@ -35,45 +38,56 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToke
         const history = useHistory();
 
     const initHistory = useCallback(() => {
-
-        if(isErrorOfDelete === false) {
-            renewArticlesList(5, page, jToken); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
-            updateStatusOfDeleteError(null);
-            history.push(path.home);
-        }
+        
         if(isErrorOfLiked === false || isErrorOfUnLiked === false) {
             // getSingleArticle(match.params.slug, jToken);
             updateIsErrorOfLiked(null);
             updateIsErrorOfUnLiked(null);
         }
-        if(isErrorOfLiked === true) {
+        if(isErrorOfLiked === true ) {
             openNotification('error', 'Error', 'No authorization.')
             updateIsErrorOfLiked(null);
             updateIsErrorOfUnLiked(null)
         }
-    }, [history, isErrorOfLiked, isErrorOfUnLiked, isErrorOfDelete, jToken, page, renewArticlesList, updateIsErrorOfLiked, updateIsErrorOfUnLiked, updateStatusOfDeleteError]);
+    }, [isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked]);
 
     useEffect( () => {
-            getSingleArticle(match.params.slug, jToken) // запрос на статью
+        initHistory();
+        const fetchData = async () => {
+            try{
+                await getSingleArticle(match.params.slug) // запрос на статью
+            }
+            catch {
+                updateIsError(true);
+            }
 
-        initHistory()
-    },[initHistory])// eslint-disable-line react-hooks/exhaustive-deps
+        }
+        fetchData();
 
-    const confirm = () => {
-        removeArticle(match.params.slug, jToken);
+        if(isErrorOfGetSingleArticle === true) {
+            openNotification('error', 'Error', 'Request failed.')
+        }
+
+        return () => {
+            updateIsLoad(true);
+        };
+    },[])// eslint-disable-line react-hooks/exhaustive-deps
+
+
+
+    const confirm = async () => {
+        await removeArticle(match.params.slug);
+        updateArticle([]);
+        renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
+        updateStatusOfDeleteError(null);
+        history.push(path.home);
+        updateIsError(false);
     }
-
-
 
     const renderArticle = (singleArticle) => {
 
-        if(isLoad === true) return <Loader type="Rings" color='#2196f3' height={80} width={80} className={loader}/>;
-
         // eslint-disable-next-line no-shadow
-        const {article} = singleArticle
-
-
-
+        const {article} = singleArticle;
 
             const {title, description, author, createdAt, body, tagList, slug, favoritesCount, favorited} = article;
             const {username, image} = author;
@@ -81,14 +95,13 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToke
 
              const handleLikeSubmit = () => {
                 if(favorited === false) {
-                    likesArticle(slug, jToken);
+                    likesArticle(slug);
 
                 }
                 if(favorited === true) {
-                    unLikesArticle(slug, jToken)
+                    unLikesArticle(slug)
                 }
              }
-
             const dt = convertDate(createdAt);
             return (
                 <div className={singleArticleWrapper}>
@@ -130,6 +143,7 @@ const SingleArticle = ({match, article, isLoad, getSingleArticle, isLogin, jToke
             )
     }
     if(article.length === 0) return <Loader type="Rings" color='#2196f3' height={80} width={80} className={loader}/>;
+
    return renderArticle(article);
 }
 SingleArticle.defaultProps = {
@@ -138,7 +152,6 @@ SingleArticle.defaultProps = {
     isLoad: true,
     isLogin: false,
     isErrorOfDelete: false,
-    jToken: '',
     page: 1,
     nickName: '',
     getSingleArticle: ()=>{},
@@ -152,6 +165,10 @@ SingleArticle.defaultProps = {
     likedArticle: {},
     updateIsErrorOfLiked: ()=>{},
     updateIsErrorOfUnLiked: ()=>{},
+    isErrorOfGetSingleArticle: false,
+    updateIsError: ()=>{},
+    updateArticle: ()=>{},
+    updateIsLoad: ()=>{}
 }
 SingleArticle.propTypes = {
     match: PropTypes.shape({params: PropTypes.shape({slug: PropTypes.string})}),
@@ -159,7 +176,6 @@ SingleArticle.propTypes = {
     isLoad: PropTypes.bool,
     isLogin: PropTypes.bool,
     isErrorOfDelete: PropTypes.bool,
-    jToken: PropTypes.string,
     page: PropTypes.number,
     nickName: PropTypes.string,
     getSingleArticle: PropTypes.func,
@@ -173,13 +189,16 @@ SingleArticle.propTypes = {
     likedArticle: PropTypes.shape({}),
     updateIsErrorOfLiked: PropTypes.func,
     updateIsErrorOfUnLiked: PropTypes.func,
+    isErrorOfGetSingleArticle: PropTypes.bool,
+    updateIsError: PropTypes.func,
+    updateArticle: PropTypes.func,
+    updateIsLoad: PropTypes.func
     
 }
 
 const mapStateToProps = (state) => {
-    const isLogin = getIsLogin();
-    const user = getUser();
-    const jToken = user === null? '' : user.token;
+    const isLogin = getItem('isLogin');
+    const user = getItem('user');
     const nickName = user === null? '' : user.username;
     return {
         article: state.singleArticleReducer.articleSuccess,
@@ -187,23 +206,26 @@ const mapStateToProps = (state) => {
         isErrorOfDelete: state.deleteArticleReducer.deleteArticleFailed,
         page: state.articlesReducer.currentPage,
         isLogin,
-        jToken,
         nickName,
         favoriteArticle: state.favoritesArticleReducer.favoriteArticleSuccess,
         isErrorOfLiked: state.favoritesArticleReducer.favoriteArticleFailed,
         isErrorOfUnLiked: state.favoritesArticleReducer.unFavoriteArticleFailed,
+        isErrorOfGetSingleArticle: state.singleArticleReducer.articleFailed
     }
 
 
 }
 const mapDispatchToProps = (dispatch) => ({
     setSingle: (bool) => dispatch(isSingleArticle(bool)),
-    getSingleArticle: (slug, token) => dispatch(getArticle(slug, token)),
-    removeArticle: (slug, token) => dispatch(deleteArticle(slug, token)),
-    renewArticlesList: (key, page, token)=> dispatch(updateArticlesList(key, page, token)),
+    getSingleArticle: (slug) => dispatch(getArticle(slug)),
+    updateArticle: (article) => dispatch(getSingleArticleSuccess(article)),
+    updateIsError: (isLoad) => dispatch(getSingleArticleFailed(isLoad)),
+    updateIsLoad: (isLoad) => dispatch(getSingleArticleRequest(isLoad)),
+    removeArticle: (slug) => dispatch(deleteArticle(slug)),
+    renewArticlesList: (key, page)=> dispatch(updateArticlesList(key, page)),
     updateStatusOfDeleteError: (isError) => dispatch(deleteArticleFailed(isError)),
-    likesArticle: (slug, token) => dispatch(favoriteArticle(slug, token)),
-    unLikesArticle: (slug, token) => dispatch(unFavoriteArticle(slug, token)),
+    likesArticle: (slug) => dispatch(favoriteArticle(slug)),
+    unLikesArticle: (slug) => dispatch(unFavoriteArticle(slug)),
     updateIsErrorOfLiked: (isError) => dispatch(favoriteArticleFailed(isError)),
     updateIsErrorOfUnLiked: (isError) => dispatch(unFavoriteArticleFailed(isError))
 })

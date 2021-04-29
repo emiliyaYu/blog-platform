@@ -1,4 +1,6 @@
 import * as articles from '../../actions/articles/index';
+import {FAVORITE_ARTICLE_SUCCESS, UN_FAVORITE_ARTICLE_SUCCESS} from "../../actions/favorites-article";
+
 
 const initialState = {
     articlesRequest: false,
@@ -29,6 +31,30 @@ const articlesReducer = (state = initialState, {type, payload}) => {
             return{
                 ...state,
                 currentPage: payload,
+            }
+        case FAVORITE_ARTICLE_SUCCESS:
+            return {
+                ...state,
+                articlesSuccess: state.articlesSuccess.map((el) => {
+                    let res = {...el};
+                    const {article} = payload
+                    if(res.slug === article.slug) {
+                        res = article;
+                    }
+                    return res;
+                })
+            }
+        case UN_FAVORITE_ARTICLE_SUCCESS:
+            return {
+                ...state,
+                articlesSuccess: state.articlesSuccess.map((el) => {
+                    let res = {...el};
+                    const {article} = payload
+                    if(res.slug === article.slug) {
+                        res = article;
+                    }
+                    return res;
+                })
             }
         default:
             return state;

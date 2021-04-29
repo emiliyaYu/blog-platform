@@ -8,23 +8,24 @@ import {Link} from 'react-router-dom';
 import styles from './article.module.scss';
 import convertDate from "../../utilts/convertDate";
 import {favoriteArticle, unFavoriteArticle} from "../../redux/actions/favorites-article";
-import {getUser} from "../../services/local-storage";
 
 
-const Article = ({title, tagList, user, date, slug, description, likesCount, isFavorite,likesArticle, jToken, unLikesArticle}) => {
-    const dt = convertDate(date)
-    const {username, image} = user;
+const Article = ({article, unLikesArticle, likesArticle }) => {
+
+    const {title, tagList, author, createdAt, slug, description, favorited, favoritesCount} = article;
+
+    const dt = convertDate(createdAt)
+    const {username, image} = author;
     const tags = tagList.map(tag => <Tag key={uniqueId('id')}>{tag}</Tag>);
 
     const {articleWrapper, articleInfo, articleTitle, articleDesc, userInfo, nameAndDate, userName, articleDate, articleText, articleLikes, titleInfo, likeOutLined, likeCount} = styles;
 
-
     const handleLikeSubmit = () => {
-        if(isFavorite === false){
-            likesArticle(slug, jToken);
+        if(favorited === false){
+            likesArticle(slug);
         }
-        if(isFavorite === true) {
-            unLikesArticle(slug, jToken)
+        if(favorited === true) {
+            unLikesArticle(slug)
         }
     }
 
@@ -38,9 +39,9 @@ const Article = ({title, tagList, user, date, slug, description, likesCount, isF
                                 <span className={articleTitle}>{title}</span>
                             </Link>
                             <div className={articleLikes}>
-                                {isFavorite ?  <HeartFilled style={{color: '#1890FF'}} onClick={handleLikeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={handleLikeSubmit}/>}
+                                {favorited ?  <HeartFilled style={{color: '#1890FF'}} onClick={handleLikeSubmit}/> : <HeartOutlined className={likeOutLined} onClick={handleLikeSubmit}/>}
 
-                                <span className={likeCount}>{likesCount}</span>
+                                <span className={likeCount}>{favoritesCount}</span>
                             </div>
                         </div>
                         <div>{tags}</div>
@@ -60,39 +61,34 @@ const Article = ({title, tagList, user, date, slug, description, likesCount, isF
     )
 }
 Article.defaultProps = {
-    title: '',
-    tagList: [],
-    user: [],
-    date: '',
-    slug: '',
-    description: '',
-    likesCount: 0,
-    isFavorite: false,
-    jToken: '',
+   article: {},
     likesArticle: ()=>{},
-    unLikesArticle: ()=>{}
+    unLikesArticle: ()=>{},
+
 }
 
 Article.propTypes = {
-    title: PropTypes.string,
-    tagList: PropTypes.arrayOf(PropTypes.string),
-    user: PropTypes.shape([]),
-    date: PropTypes.string,
-    slug: PropTypes.string,
-    description: PropTypes.string,
-    likesCount: PropTypes.number,
-    isFavorite: PropTypes.bool,
-    jToken: PropTypes.string,
-    likesArticle: PropTypes.func,
-    unLikesArticle: PropTypes.func
+    article: PropTypes.shape({
+        title: PropTypes.string,
+        tagList: PropTypes.arrayOf(PropTypes.string),
+        author: PropTypes.shape([]),
+        createdAt: PropTypes.string,
+        slug: PropTypes.string,
+        description: PropTypes.string,
+        favoritesCount: PropTypes.number,
+        favorited: PropTypes.bool,
+    }),
 
+    likesArticle: PropTypes.func,
+    unLikesArticle: PropTypes.func,
 }
+
 const mapStateToProps = (state) => ({
     isSingle: state.singleArticleReducer.isSingleArticle,
-    jToken: getUser() === null ? '' : getUser().token
+    isErrorOfLiked: state.favoritesArticleReducer.favoriteArticleFailed,
 })
 const mapDispatchToProps = (dispatch) => ({
-    likesArticle: (slug, token) => dispatch(favoriteArticle(slug, token)),
-    unLikesArticle: (slug, token) => dispatch(unFavoriteArticle(slug, token))
+    likesArticle: (slug) => dispatch(favoriteArticle(slug)),
+    unLikesArticle: (slug) => dispatch(unFavoriteArticle(slug))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Article);

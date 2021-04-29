@@ -1,5 +1,5 @@
 import * as login from '../../actions/login/index'
-import {setUser, setIsLogin} from "../../../services/local-storage";
+import {removeItem, setItem} from "../../../services/local-storage";
 
 const initialState = {
     loginRequest: false,
@@ -16,7 +16,7 @@ const loginReducer = (state= initialState, {type, payload}) => {
                 loginRequest: payload
             }
         case login.LOGIN_SUCCESS:
-            setUser(payload);
+            setItem('user',payload);
             return{
                 ...state,
                 loginSuccess: payload
@@ -27,10 +27,17 @@ const loginReducer = (state= initialState, {type, payload}) => {
                 loginFailed: payload
             }
         case login.LOG_IN:
-            setIsLogin(payload)
+            setItem('isLogin', payload)
             return{
                 ...state,
                 isLogin: payload
+            }
+        case login.LOG_OUT :
+            removeItem('user');
+            setItem('isLogin', false);
+            return {
+                ...state,
+                isLogin: false
             }
         default:
             return state;

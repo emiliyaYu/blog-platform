@@ -19,7 +19,7 @@ const favoritesArticleReducer = (state = initialState, {type, payload}) => {
         case favorite.FAVORITE_ARTICLE_SUCCESS:
             return{
                 ...state,
-                favoriteArticleSuccess: payload
+                favoriteArticleSuccess: payload,
             }
         case favorite.FAVORITE_ARTICLE_FAILED:
             return{

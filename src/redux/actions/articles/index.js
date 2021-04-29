@@ -13,12 +13,12 @@ export const getArticlesSuccess = createAction(GET_ARTICLES_SUCCESS, articlesDat
 export const getArticlesFailed = createAction(GET_ARTICLES_FAILED, isError => isError);
 export const setCurrentPage = createAction(CURRENT_PAGE_OF_ARTICLES, page => page);
 
-export const updateArticlesList = (key, offset, token) => async (dispatch) => {
+export const updateArticlesList = (key, offset) => async (dispatch) => {
     const api = new Api();
     dispatch(getArticlesRequest(true))
     dispatch(getArticlesFailed(false));
     try {
-        const request = await api.getListOfArticles(key, offset, token);
+        const request = await api.getListOfArticles(key, offset);
         const { articles } = request
         dispatch(getArticlesSuccess(articles));
         dispatch(getArticlesRequest(false));
