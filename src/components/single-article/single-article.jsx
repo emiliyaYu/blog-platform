@@ -20,7 +20,7 @@ import openNotification from "../../services/notification/notification";
 import { errorStatus} from "../../constants/status";
 
 const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle, renewArticlesList, page, nickName, updateStatusOfDelete, likesArticle, unLikesArticle,
-                        updateArticle, statusOfLiked, statusOfUnLiked, isLoad}) => {
+                        updateArticle, statusOfLiked, statusOfUnLiked}) => {
 
     const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleBody, loader, articleDate, userActions,
         buttonEdit, buttonDelete, articleLikes, likeOutLined, likeCount, headerArticle} = styles;
@@ -71,7 +71,6 @@ const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle
 
              }
             const dt = convertDate(createdAt);
-            if(isLoad === 'loading') return <Loader type="Rings" color='#2196f3' height={80} width={80} className={loader}/>;
             return (
                 <div className={singleArticleWrapper}>
                     <div className={articleDesc}>
@@ -118,7 +117,6 @@ const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle
 SingleArticle.defaultProps = {
     match: {},
     article: [],
-    isLoad: 'loading',
     isLogin: false,
     statusOfDelete: 'loading',
     page: 1,
@@ -141,7 +139,6 @@ SingleArticle.defaultProps = {
 SingleArticle.propTypes = {
     match: PropTypes.shape({params: PropTypes.shape({slug: PropTypes.string})}),
     article: PropTypes.shape({}),
-    isLoad: PropTypes.string,
     isLogin: PropTypes.bool,
     statusOfDelete: PropTypes.string,
     page: PropTypes.number,
@@ -167,7 +164,6 @@ const mapStateToProps = (state) => {
     const nickName = user === null? '' : user.username;
     return {
         article: state.singleArticleReducer.articleEntities,
-        isLoad: state.singleArticleReducer.articleStatus,
         statusOfDelete: state.deleteArticleReducer.deleteArticleStatus,
         page: state.articlesReducer.currentPage,
         isLogin,
