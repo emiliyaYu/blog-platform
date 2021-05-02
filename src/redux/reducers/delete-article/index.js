@@ -1,26 +1,14 @@
 import * as remove from '../../actions/delete-article/index'
 
 const initialState = {
-    deleteArticleRequest: false,
-    deleteArticleSuccess: false,
-    deleteArticleFailed: null,
+    deleteArticleStatus: null,
 }
 const deleteArticleReducer = (state=initialState, {type, payload}) => {
     switch (type){
-        case remove.DELETE_ARTICLE_REQUEST:
+        case remove.DELETE_ARTICLE_STATUS:
             return{
                 ...state,
-                deleteArticleRequest: payload
-            };
-        case remove.DELETE_ARTICLE_SUCCESS:
-            return{
-                ...state,
-                deleteArticleSuccess: payload
-            };
-        case remove.DELETE_ARTICLE_FAILED:
-            return{
-                ...state,
-                deleteArticleFailed: payload
+                deleteArticleStatus: payload
             };
         default:
             return state;

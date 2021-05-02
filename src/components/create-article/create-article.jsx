@@ -2,13 +2,14 @@ import React, {useCallback, useEffect} from 'react';
 import {connect} from "react-redux";
 import PropTypes from 'prop-types';
 import {useHistory} from 'react-router-dom';
-import {createArticleFailed, createNewArticle} from "../../redux/actions/create-article";
+import {createArticleStatus, createNewArticle} from "../../redux/actions/create-article";
 import openNotification from "../../services/notification/notification";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
 import FormCreateEditArticle from "../form-component/form-edit-create-article/form-edit-create-article";
+import {successStatus, errorStatus} from "../../constants/status";
 
-const CreateArticle = ({createArticle, isError, renewArticlesList, page, updateError, isLoad}) => {
+const CreateArticle = ({createArticle, statusOfCreate, renewArticlesList, page, updateStatus}) => {
 
 
     const defaultValue = {
@@ -28,16 +29,16 @@ const CreateArticle = ({createArticle, isError, renewArticlesList, page, updateE
 
     // eslint-disable-next-line consistent-return
     const initHistory = useCallback(() => {
-        if(isError === false) {
+        if(statusOfCreate === successStatus) {
             renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
             history.push(path.home);
-            updateError(null);
+            updateStatus(null);
         }
-        if(isError === true) {
+        if(statusOfCreate === errorStatus) {
             openNotification('error', 'Error', 'Invalid');
-            updateError(null);
+            updateStatus(null);
         }
-    }, [history, isError, page, renewArticlesList, updateError]);
+    }, [history, statusOfCreate, page, renewArticlesList, updateStatus]);
 
 
     useEffect(() => {
@@ -45,38 +46,33 @@ const CreateArticle = ({createArticle, isError, renewArticlesList, page, updateE
     },[initHistory])
 
 
-
-
     return (
-       <FormCreateEditArticle value={defaultValue} handlerSubmit={handlerSubmit} isLoad={isLoad} title='' body='' description='' titleForm='Create new article'/>
+       <FormCreateEditArticle value={defaultValue} handlerSubmit={handlerSubmit} isLoad={statusOfCreate} title='' body='' description='' titleForm='Create new article'/>
     )
 }
 CreateArticle.defaultProps = {
     createArticle: ()=>{},
-    updateError: () =>{},
+    updateStatus: () =>{},
     renewArticlesList: ()=>{},
     page: 1,
-    isError: false,
-    isLoad: false,
+    statusOfCreate: 'loading',
 }
 CreateArticle.propTypes = {
     createArticle: PropTypes.func,
-    updateError: PropTypes.func,
+    updateStatus: PropTypes.func,
     renewArticlesList: PropTypes.func,
     page: PropTypes.number,
-    isError: PropTypes.bool,
-    isLoad: PropTypes.bool
+    statusOfCreate: PropTypes.string,
 }
 const mapStateToProps = (state) => {
-    const isError = state.createArticleReducer.createArticleFailed;
+    const statusOfCreate = state.createArticleReducer.createArticleStatus;
     const page = state.articlesReducer.currentPage;
-    const isLoad = state.createArticleReducer.createArticleRequest
-    return {isError, page, isLoad};
+    return {statusOfCreate, page};
 }
 const mapDispatchToProps = (dispatch) => ({
     createArticle: (data) => dispatch(createNewArticle(data)),
     renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
-    updateError: (isError) => dispatch(createArticleFailed(isError))
+    updateStatus: (status) => dispatch(createArticleStatus(status))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateArticle);

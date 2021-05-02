@@ -1,30 +1,28 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
-import {getLoginUserSuccess} from "../login";
-import {setItem} from "../../../services/local-storage";
+import {getLoginUserEntities} from "../login";
+import localStorageService from "../../../services/local-storage";
 
-export const EDIT_PROFILE_REQUEST = 'EDIT_PROFILE_REQUEST';
-export const EDIT_PROFILE_SUCCESS = 'EDIT_PROFILE_SUCCESS';
-export const EDIT_PROFILE_FAILED = 'EDIT_PROFILE_FAILED';
+export const EDIT_PROFILE_STATUS = 'EDIT_PROFILE_STATUS';
+export const EDIT_PROFILE_ENTITIES = 'EDIT_PROFILE_ENTITIES';
 
-export const editProfileRequest = createAction(EDIT_PROFILE_REQUEST, isLoad => isLoad);
-export const editProfileSuccess = createAction(EDIT_PROFILE_SUCCESS, newUserData => newUserData);
-export const editProfileFailed = createAction(EDIT_PROFILE_FAILED, isError => isError);
+
+export const editProfileStatus = createAction(EDIT_PROFILE_STATUS, status => status);
+export const editProfileEntities = createAction(EDIT_PROFILE_ENTITIES, newUserData => newUserData);
 
 const updateUser = (userData) => async (dispatch) => {
     const api = new Api();
-    dispatch(editProfileRequest(true));
+    dispatch(editProfileStatus('loading'));
     try {
         const request = await api.editProfile(userData);
         const {user} = request;
-        dispatch(editProfileSuccess(user));
-        dispatch(getLoginUserSuccess(user))
-        setItem('user', user);
-        dispatch(editProfileRequest(false));
-        dispatch(editProfileFailed(false));
+        dispatch(editProfileEntities(user));
+        dispatch(getLoginUserEntities(user))
+        localStorageService().set('user', user);
+        dispatch(editProfileStatus('success'));
     }
     catch {
-        dispatch(editProfileFailed(true));
+        dispatch(editProfileStatus('error'));
     }
 }
 export default updateUser;

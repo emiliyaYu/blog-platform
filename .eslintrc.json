@@ -12,6 +12,7 @@
     "jest": true
   },
   "rules": {
+    "no-multiple-empty-lines": ["error", { "max" : 2, "maxEOF": 0, "maxBOF": 0}],
     "curly": ["error"],
     "max-depth": ["warn", 4],
     "id-length": ["warn", { "exceptions": ["i", "j"], "min": 2 }],

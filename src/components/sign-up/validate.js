@@ -1,4 +1,3 @@
-
 const validate = {
     validateUsername: {
         required: {
@@ -46,5 +45,3 @@ const validate = {
     }
 }
 export default validate;
-
-

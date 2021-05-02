@@ -1,32 +1,28 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
-import {isSingleArticle} from "../single-article";
 
-export const GET_ARTICLES_REQUEST = 'GET_ARTICLES_REQUEST'
-export const GET_ARTICLES_SUCCESS = 'GET_ARTICLES_SUCCESS';
-export const GET_ARTICLES_FAILED = 'GET_ARTICLES_FAILED';
+export const GET_ARTICLES_STATUS = 'GET_ARTICLES_REQUEST'
+export const GET_ARTICLES_ENTITIES = 'GET_ARTICLES_ENTITIES';
+
 
 export const CURRENT_PAGE_OF_ARTICLES = 'CURRENT_PAGE_OF_ARTICLES';
 
-export const getArticlesRequest = createAction(GET_ARTICLES_REQUEST, isLoad => isLoad);
-export const getArticlesSuccess = createAction(GET_ARTICLES_SUCCESS, articlesData => articlesData);
-export const getArticlesFailed = createAction(GET_ARTICLES_FAILED, isError => isError);
+export const getArticlesStatus = createAction(GET_ARTICLES_STATUS, status => status);
+export const getArticlesEntities = createAction(GET_ARTICLES_ENTITIES, articles => articles);
+
 export const setCurrentPage = createAction(CURRENT_PAGE_OF_ARTICLES, page => page);
 
 export const updateArticlesList = (key, offset) => async (dispatch) => {
     const api = new Api();
-    dispatch(getArticlesRequest(true))
+    dispatch(getArticlesStatus('loading'))
     try {
         const request = await api.getListOfArticles(key, offset);
         const { articles } = request
-        dispatch(getArticlesSuccess(articles));
-        dispatch(getArticlesRequest(false));
-        dispatch(isSingleArticle(false));
-        dispatch(getArticlesFailed(false));
+        dispatch(getArticlesEntities(articles));
+        dispatch(getArticlesStatus('success'));
     }
     catch {
-        dispatch(getArticlesRequest(false))
-        dispatch(getArticlesFailed(true));
+        dispatch(getArticlesStatus('error'))
     }
 
 }

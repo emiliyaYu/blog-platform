@@ -4,10 +4,13 @@ import {useForm, useFieldArray, useController} from "react-hook-form";
 import {Input} from "antd";
 import validate from "../../create-article/validate";
 import styles from "./form-edit-create-article.module.scss";
-
+import checkboxDisabledStatus from "../../../utilts/checkboxDisabledStatus";
 
 
 const FormCreateEditArticle = ({value, handlerSubmit, description, body, title, titleForm, isLoad}) => {
+
+
+    const isDisabled = checkboxDisabledStatus(isLoad);
 
     const {createArticleWrapper,createArticleTitle, createField, createItem, createTitle, createInput, createTagWrapper, tagsField,
         deleteButton, addButton, createSubmit, submitButton, tagsFieldWrapper, errorMessage} = styles;
@@ -27,7 +30,7 @@ const FormCreateEditArticle = ({value, handlerSubmit, description, body, title, 
         const firstTag = fields.indexOf(fields[0]);
         return (
             <div className={tagsField} key={tag.id}>
-                <input className={createInput} type='text' placeholder='Tag' {...register(`tagList[${index}].name` )} defaultValue='' disabled={isLoad}/>
+                <input className={createInput} type='text' placeholder='Tag' {...register(`tagList[${index}].name` )} defaultValue='' disabled={isDisabled}/>
                 {errors.index}
                 {firstTag !== index || fields.length > 1 ? <button type='button' className={deleteButton} onClick={() => remove(index)}>Delete</button> : ''}
                 {lastTag === index ? <button type='button' className={addButton} onClick={() => append({name: ''})}>Add tag</button> : ''}
@@ -42,18 +45,18 @@ const FormCreateEditArticle = ({value, handlerSubmit, description, body, title, 
             <div className={createField}>
                 <label className={createItem}>
                     <span className={createTitle}>Title</span>
-                    <input className={createInput} type='text' defaultValue={title} placeholder='Title' disabled={isLoad} {...register('title', {...validate.validateTitle})}/>
+                    <input className={createInput} type='text' defaultValue={title} placeholder='Title' disabled={isDisabled} {...register('title', {...validate.validateTitle})}/>
                     {errors.title && <p className={errorMessage}>{errors.title.message}</p>}
                 </label>
                 <label className={createItem}>
                     <span className={createTitle}>Short description</span>
-                    <input className={createInput} type='text' defaultValue={description} placeholder='Description' disabled={isLoad} {...register('description',{...validate.validateDescription})}/>
+                    <input className={createInput} type='text' defaultValue={description} placeholder='Description' disabled={isDisabled} {...register('description',{...validate.validateDescription})}/>
                     {errors.description && <p>{errors.description.message}</p>}
                 </label>
                 {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label className={createItem}>
                     <span className={createTitle}>Text</span>
-                    <TextArea autoSize={{ minRows: 3, maxRows: 5 }} {...field} defaultValue={body} disabled={isLoad}/>
+                    <TextArea autoSize={{ minRows: 3, maxRows: 5 }} {...field} defaultValue={body} disabled={isDisabled}/>
                     {errors.body && <p className={errorMessage}>{errors.body.message}</p>}
                 </label>
             </div>
@@ -77,7 +80,7 @@ FormCreateEditArticle.defaultProps = {
     body: '',
     description: '',
     titleForm: '',
-    isLoad: false,
+    isLoad: '',
 }
 FormCreateEditArticle.propTypes = {
     value: PropTypes.shape({}),
@@ -86,6 +89,6 @@ FormCreateEditArticle.propTypes = {
     body: PropTypes.string,
     description: PropTypes.string,
     titleForm: PropTypes.string,
-    isLoad: PropTypes.bool
+    isLoad: PropTypes.string
 }
 export default FormCreateEditArticle;

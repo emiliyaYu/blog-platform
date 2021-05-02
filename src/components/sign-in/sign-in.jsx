@@ -5,20 +5,21 @@ import { useForm } from "react-hook-form";
 import classes from 'classnames';
 import PropTypes from 'prop-types';
 import styles from './sign-in.module.scss'
-import {getLoginUser, getLoginUserFailed} from "../../redux/actions/login";
+import {getLoginUser, getLoginUserStatus} from "../../redux/actions/login";
 import validate from "./validate";
 import openNotification from "../../services/notification/notification";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
+import checkboxDisabledStatus from "../../utilts/checkboxDisabledStatus";
+import {successStatus, errorStatus} from "../../constants/status";
 
 
-
-const SignIn = ({setLoginUser, isError, updateIsError, page, renewArticlesList, isLoad}) => {
+const SignIn = ({setLoginUser, statusLogin, updateStatus, page, renewArticlesList}) => {
     const {signInWrapper,signInTitle, signInForm,signInItem, signInText, signInInput, signInSubmit, signInButton, hasAccount, errorMessage, errorInput} = styles;
 
-
-
     const history = useHistory();
+
+   const isDisabled = checkboxDisabledStatus(statusLogin);
 
     const {register, handleSubmit, formState: {errors}} = useForm();
 
@@ -30,16 +31,16 @@ const SignIn = ({setLoginUser, isError, updateIsError, page, renewArticlesList, 
     }
 
     const initHistory = useCallback(() => {
-        if(isError === false) {
+        if(statusLogin === successStatus) {
             renewArticlesList(5, page)
             history.push('/');
-            updateIsError(null)
+            updateStatus(null)
         }
-        if(isError === true) {
+        if(statusLogin === errorStatus) {
             openNotification('error', 'Error', 'Invalid email or password');
-            updateIsError(null)
+            updateStatus(null)
         }
-    }, [history, isError, page, renewArticlesList, updateIsError])
+    }, [statusLogin, renewArticlesList, page, history, updateStatus])
 
     useEffect(() => {
        initHistory()
@@ -51,17 +52,17 @@ const SignIn = ({setLoginUser, isError, updateIsError, page, renewArticlesList, 
             <div className={signInForm}>
                 <label className={signInItem}>
                     <span className={signInText}>Email</span>
-                    <input className={classOfInput} type='email' placeholder='Email' disabled={isLoad} {...register('loginEmail',{...validate.validateLoginEmail})}/>
+                    <input className={classOfInput} type='email' placeholder='Email' disabled={isDisabled} {...register('loginEmail',{...validate.validateLoginEmail})}/>
                     {errors.loginEmail && <p className={errorMessage}>{errors.loginEmail.message}</p>}
                 </label>
                 <label className={signInItem}>
                     <span className={signInText}>Password</span>
-                    <input className={classOfInput} type='password' placeholder='Password' disabled={isLoad} {...register('loginPassword', {...validate.validatePassword})}/>
+                    <input className={classOfInput} type='password' placeholder='Password' disabled={isDisabled} {...register('loginPassword', {...validate.validatePassword})}/>
                     {errors.loginPassword && <p className={errorMessage}>{errors.loginPassword.message}</p>}
                 </label>
             </div>
             <div className={signInSubmit}>
-                <button className={signInButton} type='button' onClick={handleSubmit(handlerSubmit)} disabled={isLoad}>Login</button>
+                <button className={signInButton} type='button' onClick={handleSubmit(handlerSubmit)} disabled={isDisabled}>Login</button>
                 <span className={hasAccount}>Don’t have an account? <Link to={path.signUp}>Sign Up.</Link></span>
             </div>
         </form>
@@ -69,28 +70,25 @@ const SignIn = ({setLoginUser, isError, updateIsError, page, renewArticlesList, 
 }
 SignIn.defaultProps = {
     setLoginUser: ()=>{},
-    updateIsError: ()=>{},
+    updateStatus: ()=>{},
     renewArticlesList:()=>{},
-    isError: false,
+    statusLogin: '',
     page: 1,
-    isLoad: false
 }
 SignIn.propTypes = {
     setLoginUser: PropTypes.func,
-    updateIsError: PropTypes.func,
+    updateStatus: PropTypes.func,
     renewArticlesList: PropTypes.func,
-    isError: PropTypes.bool,
+    statusLogin: PropTypes.string,
     page: PropTypes.number,
-    isLoad: PropTypes.bool
 }
 const mapSateToProps = (state) => ({
-    isError: state.loginReducer.loginFailed,
+    statusLogin: state.loginReducer.loginStatus,
     page: state.articlesReducer.currentPage,
-    isLoad: state.loginReducer.loginRequest
 })
 const mapDispatchToProps = (dispatch) => ({
     setLoginUser: (email, password) => dispatch(getLoginUser(email, password)),
-    updateIsError : (isError) => dispatch(getLoginUserFailed(isError)),
+    updateStatus : (status) => dispatch(getLoginUserStatus(status)),
     renewArticlesList: (key, page) => dispatch(updateArticlesList(key, page))
 })
 export default connect(mapSateToProps, mapDispatchToProps)(SignIn);

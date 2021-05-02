@@ -5,7 +5,7 @@ import {Avatar} from "antd";
 import {Link} from 'react-router-dom'
 import classes from 'classnames';
 import styles from './header.module.scss'
-import {getItem} from "../../services/local-storage";
+import localStorageService from "../../services/local-storage";
 import {logOutSuccess} from "../../redux/actions/login";
 import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
@@ -16,7 +16,6 @@ const Header = ({user, updateIsLogin, page, renewArticlesList, isLogin, updateCu
     const {header, titleHeader, buttonHeaderWrapper, buttonHeader, SignIn, SignUp, createArticleButton, userName, logOutButton, buttonAuthWrapper, link, avatar} = styles;
     const signInClass = classes(buttonHeader, SignIn);
     const signUpClass = classes(buttonHeader, SignUp);
-
 
     const handlerLogOut = () => {
         updateIsLogin();
@@ -76,9 +75,9 @@ Header.propTypes = {
     updateCurrentPage: PropTypes.func
 }
 const mapStateToProps = (state) => ({
-        user: getItem('user'),
+        user: localStorageService().get('user'),
         page: state.articlesReducer.currentPage,
-        isLogin: getItem('isLogin')
+        isLogin: localStorageService().get('isLogin')
     })
 const mapDispatchToProps = (dispatch) =>({
     updateIsLogin: () => dispatch(logOutSuccess()),

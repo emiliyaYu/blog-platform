@@ -1,28 +1,22 @@
-import { EDIT_PROFILE_REQUEST, EDIT_PROFILE_SUCCESS, EDIT_PROFILE_FAILED } from "../../actions/edit-profile";
+import {EDIT_PROFILE_ENTITIES, EDIT_PROFILE_STATUS} from "../../actions/edit-profile";
 
 const initialState = {
-    editProfileRequest: false,
-    editProfileSuccess: [],
-    editProfileFailed: null,
+    editProfileStatus: null,
+    editProfileEntities: [],
 }
 
 const updateEditProfile = (state = initialState, action) => {
 
    switch (action.type) {
-       case EDIT_PROFILE_REQUEST:
+       case EDIT_PROFILE_STATUS:
            return {
                ...state,
-               editProfileRequest: action.payload,
+               editProfileStatus: action.payload,
            };
-       case EDIT_PROFILE_SUCCESS :
+       case EDIT_PROFILE_ENTITIES :
            return {
                ...state,
-               editProfileSuccess: action.payload
-           }
-       case EDIT_PROFILE_FAILED :
-           return {
-               ...state,
-               editProfileFailed : action.payload
+               editProfileEntities: action.payload
            }
        default:
            return state;

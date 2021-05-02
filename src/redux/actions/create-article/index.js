@@ -1,26 +1,22 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
 
-export const CREATE_ARTICLE_REQUEST = 'CREATE_ARTICLE_REQUEST';
-export const CREATE_ARTICLE_SUCCESS = 'CREATE_ARTICLE_SUCCESS';
-export const CREATE_ARTICLE_FAILED = 'CREATE_ARTICLE_FAILED';
+export const CREATE_ARTICLE_STATUS = 'CREATE_ARTICLE_STATUS';
+export const CREATE_ARTICLE_ENTITIES = 'CREATE_ARTICLE_ENTITIES';
 
-export const createArticleRequest = createAction(CREATE_ARTICLE_REQUEST, isLoad=>isLoad);
-export const createArticleSuccess = createAction(CREATE_ARTICLE_SUCCESS, newArticle=>newArticle);
-export const createArticleFailed = createAction(CREATE_ARTICLE_FAILED, isError=>isError);
+export const createArticleStatus = createAction(CREATE_ARTICLE_STATUS, status => status);
+export const createArticleEntities = createAction(CREATE_ARTICLE_ENTITIES, newArticle => newArticle);
 
 export const createNewArticle = (newArticle) => async (dispatch) => {
     const api = new Api();
-    dispatch(createArticleRequest(true));
+    dispatch(createArticleStatus('loading'));
     try{
         const request = await api.createArticle(newArticle);
         const {article} = request;
-        dispatch(createArticleSuccess(article));
-        dispatch(createArticleRequest(false));
-        dispatch(createArticleFailed(false));
+        dispatch(createArticleEntities(article));
+        dispatch(createArticleStatus('success'));
     }
     catch {
-        dispatch(createArticleFailed(true));
-        dispatch(createArticleRequest(false));
+        dispatch(createArticleStatus('error'));
     }
 }

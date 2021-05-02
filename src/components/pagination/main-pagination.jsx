@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Pagination } from 'antd';
 import styles from './main-pagination.module.scss'
 import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
+import {loadStatus} from "../../constants/status";
 
 const MainPagination = ({setPage, isLoading, currentPage}) => {
 
@@ -13,7 +14,7 @@ const MainPagination = ({setPage, isLoading, currentPage}) => {
         setPage(page)
         dispatch(updateArticlesList(5, page))
     }
-    if(isLoading === true) {
+    if(isLoading === loadStatus) {
         return null
     }
     return(
@@ -24,16 +25,16 @@ const MainPagination = ({setPage, isLoading, currentPage}) => {
 }
 MainPagination.defaultProps = {
     setPage: ()=>{},
-    isLoading: true,
+    isLoading: 'loading',
     currentPage: 1
 }
 MainPagination.propTypes = {
     setPage: PropTypes.func,
-    isLoading: PropTypes.bool,
+    isLoading: PropTypes.string,
     currentPage: PropTypes.number
 }
 const mapStateToProps = (state) => ({
-    isLoading: state.articlesReducer.articlesRequest,
+    isLoading: state.articlesReducer.articlesStatus,
     currentPage: state.articlesReducer.currentPage
 })
 const mapDispatchToProps = (dispatch) => ({

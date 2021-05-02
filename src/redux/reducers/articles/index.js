@@ -1,41 +1,33 @@
 import * as articles from '../../actions/articles/index';
-import {FAVORITE_ARTICLE_SUCCESS, UN_FAVORITE_ARTICLE_SUCCESS} from "../../actions/favorites-article";
-
+import {FAVORITE_ARTICLE_ENTITIES, UN_FAVORITE_ARTICLE_ENTITIES} from "../../actions/favorites-article";
 
 const initialState = {
-    articlesRequest: false,
-    articlesSuccess: [],
-    articlesFailed: null,
+    articlesStatus: null,
+    articlesEntities: [],
     currentPage: 1
 }
 
 const articlesReducer = (state = initialState, {type, payload}) => {
     switch (type){
-        case articles.GET_ARTICLES_REQUEST:
-            return{
+        case articles.GET_ARTICLES_STATUS:
+            return {
                 ...state,
-                articlesRequest: payload,
+                articlesStatus: payload
             }
-        case articles.GET_ARTICLES_SUCCESS:
-            return{
+        case articles.GET_ARTICLES_ENTITIES:
+            return {
                 ...state,
-                articlesSuccess: payload,
-            }
-
-        case articles.GET_ARTICLES_FAILED:
-            return{
-                ...state,
-                articlesFailed: false,
+                articlesEntities: payload
             }
         case articles.CURRENT_PAGE_OF_ARTICLES:
             return{
                 ...state,
                 currentPage: payload,
             }
-        case FAVORITE_ARTICLE_SUCCESS:
+        case FAVORITE_ARTICLE_ENTITIES:
             return {
                 ...state,
-                articlesSuccess: state.articlesSuccess.map((el) => {
+                articlesEntities: state.articlesEntities.map((el) => {
                     let res = {...el};
                     const {article} = payload
                     if(res.slug === article.slug) {
@@ -44,10 +36,10 @@ const articlesReducer = (state = initialState, {type, payload}) => {
                     return res;
                 })
             }
-        case UN_FAVORITE_ARTICLE_SUCCESS:
+        case UN_FAVORITE_ARTICLE_ENTITIES:
             return {
                 ...state,
-                articlesSuccess: state.articlesSuccess.map((el) => {
+                articlesEntities: state.articlesEntities.map((el) => {
                     let res = {...el};
                     const {article} = payload
                     if(res.slug === article.slug) {

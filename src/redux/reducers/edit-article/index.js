@@ -1,27 +1,15 @@
 import * as edit from '../../actions/edit-article/index';
 
 const initialState = {
-    editArticleRequest: false,
-    editArticleSuccess: null,
-    editArticleFailed: null,
+    editArticleStatus: null,
 }
 
 const editArticleReducer = (state = initialState, {type, payload}) => {
     switch(type){
-        case edit.EDIT_ARTICLE_REQUEST:
+        case edit.EDIT_ARTICLE_STATUS:
             return{
                 ...state,
-                editArticleRequest: payload
-            }
-        case edit.EDIT_ARTICLE_SUCCESS:
-            return{
-                ...state,
-                editArticleSuccess: payload
-            }
-        case edit.EDIT_ARTICLE_FAILED:
-            return{
-                ...state,
-                editArticleFailed: payload
+                editArticleStatus: payload
             }
         default:
             return state;

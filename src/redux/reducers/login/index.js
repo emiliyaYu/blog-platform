@@ -1,40 +1,34 @@
 import * as login from '../../actions/login/index'
-import {removeItem, setItem} from "../../../services/local-storage";
+import localStorageService from "../../../services/local-storage";
 
 const initialState = {
-    loginRequest: false,
-    loginSuccess: [],
-    loginFailed: null,
+    loginStatus: null,
+    loginEntities: [],
     isLogin: false
 }
 const loginReducer = (state= initialState, {type, payload}) => {
     switch(type){
-        case login.LOGIN_REQUEST:
+        case login.LOGIN_STATUS:
 
             return{
                 ...state,
-                loginRequest: payload
+                loginStatus: payload
             }
-        case login.LOGIN_SUCCESS:
-            setItem('user',payload);
+        case login.LOGIN_ENTITIES:
+            localStorageService().set('user', payload);
             return{
                 ...state,
-                loginSuccess: payload
-            }
-        case login.LOGIN_FAILED:
-            return{
-                ...state,
-                loginFailed: payload
+                loginEntities: payload
             }
         case login.LOG_IN:
-            setItem('isLogin', payload)
+            localStorageService().set('isLogin', payload)
             return{
                 ...state,
                 isLogin: payload
             }
         case login.LOG_OUT :
-            removeItem('user');
-            setItem('isLogin', false);
+            localStorageService().remove('user');
+            localStorageService().set('isLogin', false);
             return {
                 ...state,
                 isLogin: false

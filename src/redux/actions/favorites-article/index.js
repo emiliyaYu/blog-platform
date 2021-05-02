@@ -1,51 +1,43 @@
 import {createAction} from 'redux-actions';
 import Api from "../../../services/api-service";
 
-export const FAVORITE_ARTICLE_REQUEST = 'FAVORITE_ARTICLE_REQUEST';
-export const FAVORITE_ARTICLE_SUCCESS = 'FAVORITE_ARTICLE_SUCCESS';
-export const FAVORITE_ARTICLE_FAILED = 'FAVORITE_ARTICLE_FAILED';
+export const FAVORITE_ARTICLE_STATUS = 'FAVORITE_ARTICLE_STATUS';
+export const FAVORITE_ARTICLE_ENTITIES= 'FAVORITE_ARTICLE_ENTITIES';
 
-export const UN_FAVORITE_ARTICLE_REQUEST = 'UN_FAVORITE_ARTICLE_REQUEST';
-export const UN_FAVORITE_ARTICLE_SUCCESS = 'UN_FAVORITE_ARTICLE_SUCCESS';
-export const UN_FAVORITE_ARTICLE_FAILED = 'UN_FAVORITE_ARTICLE_FAILED';
+export const UN_FAVORITE_ARTICLE_STATUS = 'UN_FAVORITE_ARTICLE_STATUS';
+export const UN_FAVORITE_ARTICLE_ENTITIES = 'UN_FAVORITE_ARTICLE_ENTITIES';
 
 
-export const favoriteArticleRequest = createAction(FAVORITE_ARTICLE_REQUEST, isLoad => isLoad);
-export const favoriteArticleSuccess = createAction(FAVORITE_ARTICLE_SUCCESS, newArticle => newArticle);
-export const favoriteArticleFailed = createAction(FAVORITE_ARTICLE_FAILED, isError => isError);
+export const favoriteArticleStatus = createAction(FAVORITE_ARTICLE_STATUS, status => status);
+export const favoriteArticleEntities = createAction(FAVORITE_ARTICLE_ENTITIES, newArticle => newArticle);
 
-export const unFavoriteArticleRequest = createAction(UN_FAVORITE_ARTICLE_REQUEST, isLoad => isLoad);
-export const unFavoriteArticleSuccess = createAction(UN_FAVORITE_ARTICLE_SUCCESS, newArticle => newArticle);
-export const unFavoriteArticleFailed = createAction(UN_FAVORITE_ARTICLE_FAILED, isError => isError);
+export const unFavoriteArticleStatus = createAction(UN_FAVORITE_ARTICLE_STATUS, status => status);
+export const unFavoriteArticleEntities = createAction(UN_FAVORITE_ARTICLE_ENTITIES, newArticle => newArticle);
 
 
 export const favoriteArticle = (slug) => async (dispatch) => {
     const api = new Api();
-    dispatch(favoriteArticleRequest(true));
+    dispatch(favoriteArticleStatus('loading'));
     try{
         const request = await api.likedArticle(slug);
-        dispatch(favoriteArticleSuccess(request));
-        dispatch(favoriteArticleRequest(false));
-        dispatch(favoriteArticleFailed(false));
+        dispatch(favoriteArticleEntities(request));
+        dispatch(favoriteArticleStatus('success'));
     }
     catch{
-        dispatch(favoriteArticleRequest(false));
-        dispatch(favoriteArticleFailed(true));
+        dispatch(favoriteArticleStatus('error'));
     }
 }
 
 export const unFavoriteArticle = (slug, token) => async (dispatch) => {
     const api = new Api();
-    dispatch(unFavoriteArticleRequest(true));
+    dispatch(unFavoriteArticleStatus('loading'));
     try{
         const request = await api.unLickedArticle(slug, token);
 
-        dispatch(unFavoriteArticleSuccess(request));
-        dispatch(unFavoriteArticleRequest(false));
-        dispatch(unFavoriteArticleFailed(false));
+        dispatch(unFavoriteArticleEntities(request));
+        dispatch(unFavoriteArticleStatus('success'));
     }
     catch {
-        dispatch(unFavoriteArticleRequest(false));
-        dispatch(unFavoriteArticleFailed(true));
+        dispatch(unFavoriteArticleStatus('error'));
     }
 }

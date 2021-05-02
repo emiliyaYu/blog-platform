@@ -5,12 +5,17 @@ import {connect} from "react-redux";
 import {Link, useHistory} from 'react-router-dom';
 import classes from 'classnames';
 import styles from './sign-up.module.scss'
-import {registrationFailed, getUser} from "../../redux/actions/registration";
+import {getUser, registrationStatus} from "../../redux/actions/registration";
 import validate from "./validate";
 import openNotification from "../../services/notification/notification";
 import * as path from '../../routes/index';
+import {successStatus, errorStatus} from "../../constants/status";
+import checkboxDisabledStatus from "../../utilts/checkboxDisabledStatus";
 
-const SignUp = ({setUser, isError, updateError, isLoad}) => {
+const SignUp = ({setUser, statusOfSignUp, updateStatus}) => {
+
+
+    const isDisabled = checkboxDisabledStatus(statusOfSignUp);
 
     const {signUpWrapper, signUpTitle, registerWrapper, registerTitle, registerInput, personalInfoWrapper, personalInfo, personalInfoText, hasAccount,submitWrapper, registerItem, submitButton,
         personalInfoCheck, errorMessage, errorInput} = styles;
@@ -29,15 +34,15 @@ const SignUp = ({setUser, isError, updateError, isLoad}) => {
     }
 
     useEffect(() => {
-        if (isError === true) {
+        if (statusOfSignUp === errorStatus) {
             openNotification('error', 'Error', 'Request failed.');
-            updateError(null);
+            updateStatus(null);
         }
-        if(isError === false) {
+        if(statusOfSignUp === successStatus) {
             history.push(path.signIn);
-            updateError(null);
+            updateStatus(null);
         }
-    },[history, isError, updateError])
+    },[history, statusOfSignUp, updateStatus])
 
     return(
         <form className={signUpWrapper} onSubmit={handleSubmit(handlerSubmit)}>
@@ -45,35 +50,35 @@ const SignUp = ({setUser, isError, updateError, isLoad}) => {
             <fieldset className={registerWrapper}>
                 <label className={registerItem}>
                     <span className={registerTitle}>Username</span>
-                    <input className={classOfInput} type='text' placeholder='username' disabled={isLoad}
+                    <input className={classOfInput} type='text' placeholder='username' disabled={isDisabled}
                            {...register('username', {...validate.validateUsername})}/>
                     {errors.username && <p className={errorMessage}>{errors.username.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Email</span>
-                    <input className={classOfInput} type='email' placeholder='Email' disabled={isLoad} {...register('registerEmail', {...validate.validateEmail})}/>
+                    <input className={classOfInput} type='email' placeholder='Email' disabled={isDisabled} {...register('registerEmail', {...validate.validateEmail})}/>
                     {errors.registerEmail && <p className={errorMessage}>{errors.registerEmail.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Password</span>
-                    <input className={classOfInput} type='password' placeholder='Password'  disabled={isLoad} {...register('registerPassword', {...validate.validatePassword})}/>
+                    <input className={classOfInput} type='password' placeholder='Password'  disabled={isDisabled} {...register('registerPassword', {...validate.validatePassword})}/>
                     {errors.registerPassword && <p className={errorMessage}>{errors.registerPassword.message}</p>}
                 </label>
                 <label className={registerItem}>
                     <span className={registerTitle}>Repeat password</span>
-                    <input className={classOfInput} type='password'  placeholder='Repeat password' disabled={isLoad} {...register('registerRepeatPassword', {validate: value => value === currentPassword})}/>
+                    <input className={classOfInput} type='password'  placeholder='Repeat password' disabled={isDisabled} {...register('registerRepeatPassword', {validate: value => value === currentPassword})}/>
                     {errors.registerRepeatPassword && <p className={errorMessage}>Password does not match.</p>}
                 </label>
                 <fieldset className={personalInfoWrapper}>
                     <label className={personalInfo}>
-                        <input type='checkbox' name='personalInfoAgree' className={personalInfoCheck} disabled={isLoad} {...register('personalInfo', {...validate.validatePersonalInfo})}/>
+                        <input type='checkbox' name='personalInfoAgree' className={personalInfoCheck} disabled={isDisabled} {...register('personalInfo', {...validate.validatePersonalInfo})}/>
                         <span className={personalInfoText}>I agree to the processing of my personal information</span>
                     </label>
                     {errors.personalInfo && <p className={errorMessage}>{errors.personalInfo.message}</p>}
                 </fieldset>
             </fieldset>
             <fieldset className={submitWrapper}>
-                <button type='button' className={submitButton} onClick={handleSubmit(handlerSubmit)} disabled={isLoad}>Create</button>
+                <button type='button' className={submitButton} onClick={handleSubmit(handlerSubmit)} disabled={isDisabled}>Create</button>
                 <span className={hasAccount}>
                     Already have an account? <Link to={path.signIn}>Sign In.</Link>
                 </span>
@@ -81,24 +86,22 @@ const SignUp = ({setUser, isError, updateError, isLoad}) => {
         </form>
     )
 }
-SignUp.defaultProps = {
-    setUser: ()=>{},
-    updateError: ()=>{},
-    isError: false,
-    isLoad: false
-}
+
 SignUp.propTypes = {
     setUser: PropTypes.func,
-    updateError: PropTypes.func,
-    isError: PropTypes.bool,
-    isLoad: PropTypes.bool
+    updateStatus: PropTypes.func,
+    statusOfSignUp: PropTypes.string
+}
+SignUp.defaultProps = {
+    setUser: () => {},
+    updateStatus: () => {},
+    statusOfSignUp: 'loading'
 }
 const mapStateToProps = (state) => ({
-    isError: state.registrationReducer.registrationFailed,
-    isLoad: state.registrationReducer.registrationRequest
+    statusOfSignUp: state.registrationReducer.registrationStatus,
 })
 const mapDispatchToProps = (dispatch) => ({
     setUser: (username, email, password) => dispatch(getUser(username, email, password)),
-    updateError: (isError) => dispatch(registrationFailed(isError))
+    updateStatus: (status) => dispatch(registrationStatus(status))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

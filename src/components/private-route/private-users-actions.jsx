@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {Route, useHistory} from 'react-router-dom';
 import {home} from '../../routes/index'
-import {getItem} from "../../services/local-storage";
+import localStorageService from "../../services/local-storage";
 
 const PrivateUsersActions = ({children, isLogin, ...rest}) => {
     const history = useHistory();
@@ -19,6 +19,6 @@ PrivateUsersActions.propTypes = {
     isLogin: PropTypes.bool
 }
 const mapStateToProps = () => ({
-    isLogin: getItem('isLogin')
+    isLogin: localStorageService().get('isLogin')
 })
 export default connect(mapStateToProps)(PrivateUsersActions);

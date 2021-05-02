@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
@@ -17,25 +17,23 @@ import * as path from '../../routes/index';
 import PrivateRoute from "../private-route/private-logged";
 import PrivateUsersActions from "../private-route/private-users-actions";
 import 'normalize.css';
-import {getItem, setItem} from "../../services/local-storage";
-
+import localStorageService from "../../services/local-storage";
 
 
 const BlogApp = () => {
     const {content, wrapper, container} = styles;
     const dispatch = useDispatch();
-    let isLogin = getItem('isLogin');
-
-
-
+    const  setLogin = useMemo(() => {
+        let isLogin = localStorageService().get('isLogin');
+        const setIsLogin = isLogin === null ? isLogin = localStorageService().set('isLogin', false) : isLogin;
+        return setIsLogin;
+    },[])
 
 
     useEffect(() => {
         dispatch(updateArticlesList(5, 1));
         dispatch(setCurrentPage(1));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-       isLogin = isLogin === null ? setItem('isLogin', false) : isLogin;
-    }, [dispatch])
+    }, [dispatch, setLogin])
 
     
     return(

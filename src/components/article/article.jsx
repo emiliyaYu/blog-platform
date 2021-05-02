@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 import styles from './article.module.scss';
 import convertDate from "../../utilts/convertDate";
 import {favoriteArticle, unFavoriteArticle} from "../../redux/actions/favorites-article";
-import {getItem} from "../../services/local-storage";
+import localStorageService from "../../services/local-storage";
 import openNotification from "../../services/notification/notification";
 
 
@@ -24,10 +24,10 @@ const Article = ({article, unLikesArticle, likesArticle, isLogin }) => {
 
     const handleLikeSubmit = () => {
         if(isLogin){
-            if(favorited === false){
+            if(!favorited){
                 likesArticle(slug);
             }
-            if(favorited === true) {
+            if(favorited) {
                 unLikesArticle(slug)
             }
         }
@@ -96,7 +96,7 @@ Article.propTypes = {
 const mapStateToProps = (state) => ({
     isSingle: state.singleArticleReducer.isSingleArticle,
     isErrorOfLiked: state.favoritesArticleReducer.favoriteArticleFailed,
-    isLogin: getItem('isLogin')
+    isLogin: localStorageService().get('isLogin')
 })
 const mapDispatchToProps = (dispatch) => ({
     likesArticle: (slug) => dispatch(favoriteArticle(slug)),

@@ -1,10 +1,10 @@
-import {getItem} from "./local-storage";
+import localStorageService from "./local-storage";
 
 
 class Api {
     basicUrl = 'https://conduit.productionready.io/api/';
 
-    user = getItem('user');
+    user = localStorageService().get('user');
 
     userToken = this.user === null? '' : this.user.token
 
@@ -29,11 +29,14 @@ class Api {
             }
         }
         const newOptions = {headers, ...options};
+        try {
             const request = await this.getRequest(url, newOptions);
             return request;
-
+        }
+         catch {
+            throw new Error('Request failed');
+         }
     }
-
 
     getListOfArticles = async (limit = 5, page= 1) => {
         const offset = page === 1 ? 0 : (page - 1) * 5;

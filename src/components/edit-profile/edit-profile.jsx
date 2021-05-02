@@ -5,14 +5,16 @@ import {connect} from "react-redux";
 import {useForm} from "react-hook-form";
 import classes from 'classnames';
 import styles from './edit-profile.module.scss';
-import {getItem} from "../../services/local-storage";
-import updateUser, {editProfileFailed} from "../../redux/actions/edit-profile";
+import localStorageService from "../../services/local-storage";
+import updateUser, {editProfileStatus} from "../../redux/actions/edit-profile";
 import openNotification from "../../services/notification/notification";
 import validate from "./validate";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
+import {successStatus, errorStatus} from "../../constants/status";
+import checkboxDisabledStatus from "../../utilts/checkboxDisabledStatus";
 
-const EditProfile = ({updateProfile, isError, updateIsError, page, renewArticlesList}) => {
+const EditProfile = ({updateProfile, statusOdEdit, updateStatus, page, renewArticlesList}) => {
     const {editProfileWrapper,editProfileTitle, profileWrapper, profileItem, profileTitle, profileInput, submitWrapper, submitButton, errorMessage, errorInput} = styles;
 
     const {register, handleSubmit, formState: {errors}} = useForm();
@@ -23,17 +25,19 @@ const EditProfile = ({updateProfile, isError, updateIsError, page, renewArticles
 
     const history = useHistory();
 
+    const isDisabled = checkboxDisabledStatus(statusOdEdit);
+
     const initHistory = useCallback(() => {
-        if(isError === false) {
+        if(statusOdEdit === successStatus) {
             renewArticlesList(5, page); // обновление списка статей после редактирвоания профиля, создания статьи и т.п.
             history.push(path.home);
-            updateIsError(null)
+            updateStatus(null)
         }
-        if(isError === true) {
+        if(statusOdEdit === errorStatus) {
             openNotification('error', 'Error', 'Update failed');
-            updateIsError(null);
+            updateStatus(null);
         }
-    },[history, isError, renewArticlesList, page, updateIsError])
+    },[history, statusOdEdit, renewArticlesList, page, updateStatus])
 
     useEffect(() => initHistory(),[initHistory])
 
@@ -43,22 +47,22 @@ const EditProfile = ({updateProfile, isError, updateIsError, page, renewArticles
             <fieldset className={profileWrapper}>
                 <label className={profileItem}>
                     <span className={profileTitle}>Username</span>
-                    <input className={classOfInput} type='text' placeholder='username' {...register('username',{...validate.validateUsername})}/>
+                    <input className={classOfInput} type='text' placeholder='username' disabled={isDisabled} {...register('username',{...validate.validateUsername})}/>
                     {errors.username && <p className={errorMessage}>{errors.username.message}</p>}
                 </label>
                 <label className={profileItem}>
                     <span className={profileTitle}>Email address</span>
-                    <input className={classOfInput} type='email' placeholder='Email' {...register('email',{...validate.validateEmail})}/>
+                    <input className={classOfInput} type='email' placeholder='Email' disabled={isDisabled} {...register('email',{...validate.validateEmail})}/>
                     {errors.email && <p className={errorMessage}>{errors.email.message}</p>}
                 </label>
                 <label className={profileItem}>
                     <span className={profileTitle}>New password</span>
-                    <input className={classOfInput} type='password' placeholder='new password' {...register('password',{...validate.validatePassword})}/>
+                    <input className={classOfInput} type='password' placeholder='new password' disabled={isDisabled} {...register('password',{...validate.validatePassword})}/>
                     {errors.password && <p className={errorMessage}>{errors.password.message}</p>}
                 </label>
                 <label className={profileItem}>
                     <span className={profileTitle}>Avatar image (url)</span>
-                    <input className={classOfInput} type='text'  placeholder='Avatar image' {...register('image', {...validate.validateAvatar})}/>
+                    <input className={classOfInput} type='text'  placeholder='Avatar image' disabled={isDisabled} {...register('image', {...validate.validateAvatar})}/>
                     {errors.image && <p className={errorMessage}>{errors.image.message}</p>}
                 </label>
             </fieldset>
@@ -73,28 +77,26 @@ EditProfile.defaultProps = {
     updateProfile: ()=>{},
     renewArticlesList: ()=>{},
     page: 1,
-    updateIsError: ()=>{},
-    isError: false,
-    isLogin: false,
+    updateStatus: ()=>{},
+    statusOdEdit: 'loading'
 }
 EditProfile.propTypes = {
     updateProfile: PropTypes.func,
-    updateIsError: PropTypes.func,
+    updateStatus: PropTypes.func,
     renewArticlesList: PropTypes.func,
     page: PropTypes.number,
-    isError: PropTypes.bool,
-    isLogin: PropTypes.bool
+    statusOdEdit: PropTypes.string,
 }
 const mapStateToProps = (state) => ({
         page: state.articlesReducer.currentPage,
-        isError: state.updateEditProfile.editProfileFailed,
-        isLogin: getItem('isLogin')
+        statusOdEdit: state.updateEditProfile.editProfileStatus,
+        isLogin: localStorageService().get('isLogin')
     })
 
 
 const mapDispatchToProps = (dispatch) => ({
     updateProfile: (userData) => dispatch(updateUser(userData)),
     renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
-    updateIsError: (isError) => dispatch(editProfileFailed(isError))
+    updateStatus: (status) => dispatch(editProfileStatus(status))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile);

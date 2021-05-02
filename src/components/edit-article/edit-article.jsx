@@ -2,12 +2,13 @@ import React, {useEffect, useCallback} from "react";
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {useHistory} from 'react-router-dom';
-import {editArticleFailed, updateArticle} from "../../redux/actions/edit-article";
+import {editArticleStatus, updateArticle} from "../../redux/actions/edit-article";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
 import FormCreateEditArticle from "../form-component/form-edit-create-article/form-edit-create-article";
+import {successStatus} from '../../constants/status'
 
-const EditArticle = ({article, editArticle, isError, page, renewArticlesList,updateIsError, isLoad}) => {
+const EditArticle = ({article, editArticle, page, renewArticlesList, updateStatus, statusOfEdit}) => {
 
     const {title, description, body, tagList, slug} = article;
 
@@ -30,12 +31,12 @@ const EditArticle = ({article, editArticle, isError, page, renewArticlesList,upd
     const history = useHistory();
     
     const initHistory = useCallback(() => {
-        if(isError === false){
+        if(statusOfEdit === successStatus){
             renewArticlesList(5, page);
             history.push(path.home);
-            updateIsError(null)
+            updateStatus(null)
         }
-    },[history, isError, page, renewArticlesList, updateIsError])
+    },[history, statusOfEdit, page, renewArticlesList, updateStatus])
 
     useEffect(() => {
         initHistory()
@@ -43,18 +44,17 @@ const EditArticle = ({article, editArticle, isError, page, renewArticlesList,upd
 
 
     return (
-        <FormCreateEditArticle value={defaultValues} handlerSubmit={handlerSubmit} body={body} title={title} isLoad={isLoad} description={description} titleForm='Edit Article'/>
+        <FormCreateEditArticle value={defaultValues} handlerSubmit={handlerSubmit} body={body} title={title} isLoad={statusOfEdit} description={description} titleForm='Edit Article'/>
     )
 
 }
 EditArticle.defaultProps = {
     article: {},
-    isError: false,
     page: 1,
-    isLoad: false,
+    statusOfEdit: 'loading',
     editArticle: ()=>{},
     renewArticlesList: ()=>{},
-    updateIsError: ()=>{}
+    updateStatus: ()=>{}
 
 }
 EditArticle.propTypes = {
@@ -65,22 +65,20 @@ EditArticle.propTypes = {
         tagList: PropTypes.arrayOf(PropTypes.string),
         slug: PropTypes.string
     }),
-    isError: PropTypes.bool,
     page: PropTypes.number,
     editArticle: PropTypes.func,
     renewArticlesList: PropTypes.func,
-    updateIsError: PropTypes.func,
-    isLoad: PropTypes.bool
+    updateStatus: PropTypes.func,
+    statusOfEdit: PropTypes.bool
 }
 const mapStateToProps = (state) => ({
-    article: state.singleArticleReducer.articleSuccess.article,
-    isError: state.editArticleReducer.editArticleFailed,
+    article: state.singleArticleReducer.articleEntities.article,
+    statusOfEdit: state.editArticleReducer.editArticleStatus,
     page: state.articlesReducer.currentPage,
-    isLoad: state.editArticleReducer.editArticleRequest
 })
 const mapDispatchToProps = (dispatch) => ({
     editArticle: (data, slug) => dispatch(updateArticle(slug, data)),
     renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
-    updateIsError: (isError) => dispatch(editArticleFailed(isError))
+    updateStatus: (status) => dispatch(editArticleStatus(status))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(EditArticle);

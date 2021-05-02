@@ -1,26 +1,20 @@
 import * as create from '../../actions/create-article/index';
 
 const initialState = {
-    createArticleRequest: false,
-    createArticleSuccess: [],
-    createArticleFailed: null,
+    createArticleStatus: null,
+    createArticleEntities: [],
 }
 const createArticleReducer = (state=initialState, {type, payload}) => {
     switch(type){
-        case create.CREATE_ARTICLE_REQUEST:
+        case create.CREATE_ARTICLE_STATUS:
             return{
                 ...state,
-                createArticleRequest: payload,
+                createArticleStatus: payload,
             }
-        case create.CREATE_ARTICLE_SUCCESS:
+        case create.CREATE_ARTICLE_ENTITIES:
             return{
                 ...state,
-                createArticleSuccess: payload,
-            }
-        case create.CREATE_ARTICLE_FAILED:
-            return{
-                ...state,
-                createArticleFailed: payload,
+                createArticleEntities: payload,
             }
         default:
             return state;

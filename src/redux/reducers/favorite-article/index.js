@@ -1,45 +1,33 @@
 import * as favorite from '../../actions/favorites-article/index';
 
 const initialState = {
-    favoriteArticleRequest: false,
-    favoriteArticleSuccess: [],
-    favoriteArticleFailed: null,
-    unFavoriteArticleRequest: false,
-    unFavoriteArticleSuccess: [],
-    unFavoriteArticleFailed: null,
+    favoriteArticleStatus: null,
+    favoriteArticleEntities: [],
+    unFavoriteArticleStatus: null,
+    unFavoriteArticleEntities: [],
 }
 
 const favoritesArticleReducer = (state = initialState, {type, payload}) => {
     switch (type){
-        case favorite.FAVORITE_ARTICLE_REQUEST:
+        case favorite.FAVORITE_ARTICLE_STATUS:
             return{
                 ...state,
-                favoriteArticleRequest: payload
+                favoriteArticleStatus: payload
             }
-        case favorite.FAVORITE_ARTICLE_SUCCESS:
+        case favorite.FAVORITE_ARTICLE_ENTITIES:
             return{
                 ...state,
-                favoriteArticleSuccess: payload,
+                favoriteArticleEntities: payload,
             }
-        case favorite.FAVORITE_ARTICLE_FAILED:
-            return{
-                ...state,
-                favoriteArticleFailed: payload
-            }
-        case favorite.UN_FAVORITE_ARTICLE_REQUEST:
+        case favorite.UN_FAVORITE_ARTICLE_STATUS:
             return {
                 ...state,
-                unFavoriteArticleRequest: payload
+                unFavoriteArticleStatus: payload
             }
-        case favorite.UN_FAVORITE_ARTICLE_SUCCESS:
+        case favorite.UN_FAVORITE_ARTICLE_ENTITIES:
             return {
                 ...state,
-                unFavoriteArticleSuccess: payload
-            }
-        case favorite.UN_FAVORITE_ARTICLE_FAILED:
-            return {
-                ...state,
-                unFavoriteArticleFailed: payload
+                unFavoriteArticleStatus: payload
             }
         default:
             return state;
