@@ -28,10 +28,8 @@ import {
 import openNotification from "../../services/notification/notification";
 
 
-// isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked
-
 const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle, renewArticlesList, page, nickName, updateStatusOfDeleteError, likesArticle, unLikesArticle,
-                        updateArticle, updateIsError, isErrorOfLiked}) => {
+                        updateArticle, updateIsError, isErrorOfLiked, isErrorOfUnLiked}) => {
 
     const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleBody, loader, articleDate, userActions,
         buttonEdit, buttonDelete, articleLikes, likeOutLined, likeCount, headerArticle} = styles;
@@ -47,7 +45,7 @@ const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle
     useEffect( () => {
         getSingleArticle(match.params.slug) // запрос на статью
         initHistory()
-    },[getSingleArticle, match.params.slug, initHistory])
+    },[getSingleArticle, match.params.slug, initHistory, isErrorOfUnLiked])
 
 
 

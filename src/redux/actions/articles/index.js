@@ -21,7 +21,8 @@ export const updateArticlesList = (key, offset) => async (dispatch) => {
         const { articles } = request
         dispatch(getArticlesSuccess(articles));
         dispatch(getArticlesRequest(false));
-        dispatch(isSingleArticle(false))
+        dispatch(isSingleArticle(false));
+        dispatch(getArticlesFailed(false));
     }
     catch {
         dispatch(getArticlesRequest(false))

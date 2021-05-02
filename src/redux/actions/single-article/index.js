@@ -18,6 +18,7 @@ export const getArticle = (slug) => async (dispatch) => {
         const request = await api.getSingleArticle(slug);
         dispatch(getSingleArticleSuccess(request));
         dispatch(getSingleArticleRequest(false));
+        dispatch(getSingleArticleFailed(false));
         dispatch(isSingleArticle(true))
     }
     catch{
