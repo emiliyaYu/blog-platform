@@ -25,53 +25,29 @@ import {
     unFavoriteArticle,
     unFavoriteArticleFailed
 } from "../../redux/actions/favorites-article";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
 
 
+// isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked
 
 const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle, renewArticlesList, page, nickName, updateStatusOfDeleteError, likesArticle, unLikesArticle,
-                        isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked, isErrorOfGetSingleArticle, updateArticle, updateIsError, updateIsLoad}) => {
+                        updateArticle, updateIsError, isErrorOfLiked}) => {
 
     const {singleArticleWrapper, articleDesc, articleInfo,articleTitle, articleText, userInfo, nameAndDate, userName, articleBody, loader, articleDate, userActions,
         buttonEdit, buttonDelete, articleLikes, likeOutLined, likeCount, headerArticle} = styles;
 
         const history = useHistory();
 
-    const initHistory = useCallback(() => {
-        
-        if(isErrorOfLiked === false || isErrorOfUnLiked === false) {
-            // getSingleArticle(match.params.slug, jToken);
-            updateIsErrorOfLiked(null);
-            updateIsErrorOfUnLiked(null);
-        }
-        if(isErrorOfLiked === true ) {
-            openNotification('error', 'Error', 'No authorization.')
-            updateIsErrorOfLiked(null);
-            updateIsErrorOfUnLiked(null)
-        }
-    }, [isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked]);
-
-    useEffect( () => {
-        initHistory();
-        const fetchData = async () => {
-            try{
-                await getSingleArticle(match.params.slug) // запрос на статью
-            }
-            catch {
-                updateIsError(true);
-            }
-
-        }
-        fetchData();
-
-        if(isErrorOfGetSingleArticle === true) {
+    const initHistory = useCallback(() =>{
+        if(isErrorOfLiked){
             openNotification('error', 'Error', 'Request failed.')
         }
+    },[isErrorOfLiked])
 
-        return () => {
-            updateIsLoad(true);
-        };
-    },[])// eslint-disable-line react-hooks/exhaustive-deps
+    useEffect( () => {
+        getSingleArticle(match.params.slug) // запрос на статью
+        initHistory()
+    },[getSingleArticle, match.params.slug, initHistory])
 
 
 
@@ -94,13 +70,19 @@ const SingleArticle = ({match, article, getSingleArticle, isLogin, removeArticle
             const tags = tagList.map((tag) => <Tag key={uniqueId('id')}>{tag}</Tag>)
 
              const handleLikeSubmit = () => {
-                if(favorited === false) {
-                    likesArticle(slug);
+                if(isLogin){
+                    if(!favorited) {
+                        likesArticle(slug);
 
+                    }
+                    if(favorited) {
+                        unLikesArticle(slug);
+                    }
                 }
-                if(favorited === true) {
-                    unLikesArticle(slug)
+                if(!isLogin) {
+                    openNotification('error', 'Error', 'Not auth.')
                 }
+
              }
             const dt = convertDate(createdAt);
             return (
@@ -207,7 +189,6 @@ const mapStateToProps = (state) => {
         page: state.articlesReducer.currentPage,
         isLogin,
         nickName,
-        favoriteArticle: state.favoritesArticleReducer.favoriteArticleSuccess,
         isErrorOfLiked: state.favoritesArticleReducer.favoriteArticleFailed,
         isErrorOfUnLiked: state.favoritesArticleReducer.unFavoriteArticleFailed,
         isErrorOfGetSingleArticle: state.singleArticleReducer.articleFailed

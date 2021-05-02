@@ -7,9 +7,10 @@ import styles from './article-list.module.scss'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import {isSingleArticle} from "../../redux/actions/single-article";
 import {favoriteArticleFailed, unFavoriteArticleFailed} from "../../redux/actions/favorites-article";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
+import {updateArticlesList} from "../../redux/actions/articles";
 
-const ArticleList = ({articlesData, isLoading, isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked}) => {
+const ArticleList = ({articlesData, isLoading, isErrorOfLiked, isErrorOfUnLiked, updateIsErrorOfLiked, updateIsErrorOfUnLiked,}) => {
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(()=>{
@@ -17,8 +18,8 @@ const ArticleList = ({articlesData, isLoading, isErrorOfLiked, isErrorOfUnLiked,
            updateIsErrorOfLiked(null);
            updateIsErrorOfUnLiked(null)
        }
-       if(isErrorOfLiked === true || isErrorOfUnLiked === true) {
-           openNotification('error', 'Error', 'No authorization.')
+       if(isErrorOfLiked || isErrorOfUnLiked) {
+           openNotification('error', 'Error', 'Request failed.')
            updateIsErrorOfLiked(null);
            updateIsErrorOfUnLiked(null)
        }
@@ -41,6 +42,7 @@ ArticleList.defaultProps = {
     isErrorOfUnLiked: false,
     updateIsErrorOfLiked: PropTypes.func,
     updateIsErrorOfUnLiked: ()=>{},
+    
 }
 
 
@@ -56,7 +58,8 @@ ArticleList.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
     setSingle: (bool) => dispatch(isSingleArticle(bool)),
     updateIsErrorOfLiked: (isError) => dispatch(favoriteArticleFailed(isError)),
-    updateIsErrorOfUnLiked: (isError) => dispatch(unFavoriteArticleFailed(isError))
+    updateIsErrorOfUnLiked: (isError) => dispatch(unFavoriteArticleFailed(isError)),
+    renewArticlesList: (key, page) => dispatch(updateArticlesList(key, page)),
 })
 const mapStateToProps = (state) => ({
     articlesData: state.articlesReducer.articlesSuccess,

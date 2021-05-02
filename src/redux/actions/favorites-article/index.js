@@ -39,6 +39,7 @@ export const unFavoriteArticle = (slug, token) => async (dispatch) => {
     dispatch(unFavoriteArticleRequest(true));
     try{
         const request = await api.unLickedArticle(slug, token);
+
         dispatch(unFavoriteArticleSuccess(request));
         dispatch(unFavoriteArticleRequest(false));
         dispatch(unFavoriteArticleFailed(false));

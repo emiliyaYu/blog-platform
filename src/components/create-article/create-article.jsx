@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import PropTypes from 'prop-types';
 import {useHistory} from 'react-router-dom';
 import {createArticleFailed, createNewArticle} from "../../redux/actions/create-article";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
 import FormCreateEditArticle from "../form-component/form-edit-create-article/form-edit-create-article";

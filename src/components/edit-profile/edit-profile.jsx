@@ -7,7 +7,7 @@ import classes from 'classnames';
 import styles from './edit-profile.module.scss';
 import {getItem} from "../../services/local-storage";
 import updateUser, {editProfileFailed} from "../../redux/actions/edit-profile";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
 import validate from "./validate";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';

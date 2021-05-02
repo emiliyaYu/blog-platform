@@ -16,7 +16,6 @@ export const setCurrentPage = createAction(CURRENT_PAGE_OF_ARTICLES, page => pag
 export const updateArticlesList = (key, offset) => async (dispatch) => {
     const api = new Api();
     dispatch(getArticlesRequest(true))
-    dispatch(getArticlesFailed(false));
     try {
         const request = await api.getListOfArticles(key, offset);
         const { articles } = request

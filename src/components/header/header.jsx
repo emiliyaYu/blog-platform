@@ -7,12 +7,12 @@ import classes from 'classnames';
 import styles from './header.module.scss'
 import {getItem} from "../../services/local-storage";
 import {logOutSuccess} from "../../redux/actions/login";
-import {updateArticlesList} from "../../redux/actions/articles";
+import {setCurrentPage, updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
 import defaultAvatar from '../../assets/images/smiley-cyrus.jpg'
 
 
-const Header = ({user, updateIsLogin, page, renewArticlesList, isLogin}) => {
+const Header = ({user, updateIsLogin, page, renewArticlesList, isLogin, updateCurrentPage}) => {
     const {header, titleHeader, buttonHeaderWrapper, buttonHeader, SignIn, SignUp, createArticleButton, userName, logOutButton, buttonAuthWrapper, link, avatar} = styles;
     const signInClass = classes(buttonHeader, SignIn);
     const signUpClass = classes(buttonHeader, SignUp);
@@ -21,6 +21,11 @@ const Header = ({user, updateIsLogin, page, renewArticlesList, isLogin}) => {
     const handlerLogOut = () => {
         updateIsLogin();
         renewArticlesList(5, page) // обновляем статьи один раз, когда выходим из аккаунта
+    }
+
+    const updateArticleList = () =>{
+        renewArticlesList(5, 1);
+        updateCurrentPage(1);
     }
 
 
@@ -45,7 +50,7 @@ const Header = ({user, updateIsLogin, page, renewArticlesList, isLogin}) => {
 
     return (
         <header className={header}>
-            <Link to='/' className={link}><span className={titleHeader}>Realworld Blog</span></Link>
+            <Link to='/' className={link} onClick={updateArticleList}><span className={titleHeader}>Realworld Blog</span></Link>
             {isLogin ? <Authorized/> : <NotAuthorized/>}
         </header>
     )
@@ -55,6 +60,7 @@ Header.defaultProps = {
     page: 1,
     updateIsLogin: ()=>{},
     renewArticlesList:()=>{},
+    updateCurrentPage: ()=>{},
     isLogin: false
 }
 Header.propTypes = {
@@ -66,7 +72,8 @@ Header.propTypes = {
     page: PropTypes.number,
     updateIsLogin: PropTypes.func,
     renewArticlesList: PropTypes.func,
-    isLogin: PropTypes.bool
+    isLogin: PropTypes.bool,
+    updateCurrentPage: PropTypes.func
 }
 const mapStateToProps = (state) => ({
         user: getItem('user'),
@@ -74,8 +81,9 @@ const mapStateToProps = (state) => ({
         isLogin: getItem('isLogin')
     })
 const mapDispatchToProps = (dispatch) =>({
-  updateIsLogin: () => dispatch(logOutSuccess()),
-  renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
+    updateIsLogin: () => dispatch(logOutSuccess()),
+    renewArticlesList:(key, page)=> dispatch(updateArticlesList(key, page)),
+    updateCurrentPage: (page) => dispatch(setCurrentPage(page)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

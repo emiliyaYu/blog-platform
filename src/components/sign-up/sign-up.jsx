@@ -7,7 +7,7 @@ import classes from 'classnames';
 import styles from './sign-up.module.scss'
 import {registrationFailed, getUser} from "../../redux/actions/registration";
 import validate from "./validate";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
 import * as path from '../../routes/index';
 
 const SignUp = ({setUser, isError, updateError, isLoad}) => {

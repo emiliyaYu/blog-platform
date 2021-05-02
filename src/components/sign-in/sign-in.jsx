@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import styles from './sign-in.module.scss'
 import {getLoginUser, getLoginUserFailed} from "../../redux/actions/login";
 import validate from "./validate";
-import openNotification from "../../services/notification";
+import openNotification from "../../services/notification/notification";
 import {updateArticlesList} from "../../redux/actions/articles";
 import * as path from '../../routes/index';
 

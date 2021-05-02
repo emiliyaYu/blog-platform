@@ -14,7 +14,6 @@ export const isSingleArticle = createAction(IS_SINGLE_ARTICLE, isSingle => isSin
 export const getArticle = (slug) => async (dispatch) => {
     const api = new Api();
     dispatch(getSingleArticleRequest(true));
-    dispatch(getSingleArticleFailed(false));
     try {
         const request = await api.getSingleArticle(slug);
         dispatch(getSingleArticleSuccess(request));

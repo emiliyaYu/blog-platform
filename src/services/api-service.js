@@ -29,8 +29,14 @@ class Api {
             }
         }
         const newOptions = {headers, ...options};
-        const request = await this.getRequest(url, newOptions);
-        return request;
+        try {
+            const request = await this.getRequest(url, newOptions);
+            return request;
+        }
+        catch {
+            throw new Error('Request failed');
+        }
+
     }
 
 

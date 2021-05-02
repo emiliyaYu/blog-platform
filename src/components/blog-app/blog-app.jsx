@@ -28,10 +28,11 @@ const BlogApp = () => {
 
 
 
+
+
     useEffect(() => {
         dispatch(updateArticlesList(5, 1));
         dispatch(setCurrentPage(1));
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
        isLogin = isLogin === null ? setItem('isLogin', false) : isLogin;
     }, [dispatch])

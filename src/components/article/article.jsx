@@ -8,9 +8,11 @@ import {Link} from 'react-router-dom';
 import styles from './article.module.scss';
 import convertDate from "../../utilts/convertDate";
 import {favoriteArticle, unFavoriteArticle} from "../../redux/actions/favorites-article";
+import {getItem} from "../../services/local-storage";
+import openNotification from "../../services/notification/notification";
 
 
-const Article = ({article, unLikesArticle, likesArticle }) => {
+const Article = ({article, unLikesArticle, likesArticle, isLogin }) => {
 
     const {title, tagList, author, createdAt, slug, description, favorited, favoritesCount} = article;
 
@@ -21,12 +23,18 @@ const Article = ({article, unLikesArticle, likesArticle }) => {
     const {articleWrapper, articleInfo, articleTitle, articleDesc, userInfo, nameAndDate, userName, articleDate, articleText, articleLikes, titleInfo, likeOutLined, likeCount} = styles;
 
     const handleLikeSubmit = () => {
-        if(favorited === false){
-            likesArticle(slug);
+        if(isLogin){
+            if(favorited === false){
+                likesArticle(slug);
+            }
+            if(favorited === true) {
+                unLikesArticle(slug)
+            }
         }
-        if(favorited === true) {
-            unLikesArticle(slug)
+        if(!isLogin){
+            openNotification('error', 'Error', 'Not auth');
         }
+
     }
 
     return(
@@ -64,6 +72,7 @@ Article.defaultProps = {
    article: {},
     likesArticle: ()=>{},
     unLikesArticle: ()=>{},
+    isLogin: false
 
 }
 
@@ -81,11 +90,13 @@ Article.propTypes = {
 
     likesArticle: PropTypes.func,
     unLikesArticle: PropTypes.func,
+    isLogin: PropTypes.bool
 }
 
 const mapStateToProps = (state) => ({
     isSingle: state.singleArticleReducer.isSingleArticle,
     isErrorOfLiked: state.favoritesArticleReducer.favoriteArticleFailed,
+    isLogin: getItem('isLogin')
 })
 const mapDispatchToProps = (dispatch) => ({
     likesArticle: (slug) => dispatch(favoriteArticle(slug)),
